@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>验证码</title>
+    <style>
+        .card {
+            margin: 30px auto;
+            max-width: 400px;
+            border: 1px solid rgba(230, 230, 230);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .card div {
+            padding: 20px 0;
+        }
+
+        .card div:not(.body) {
+            user-select: none;
+            letter-spacing: 1px;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(230, 230, 230);
+        }
+
+        .body {
+            font-size: 60px;
+            font-weight: bold;
+            color: #6495ed;
+            border-bottom: 1px solid rgba(230, 230, 230);
+            letter-spacing: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="title">Tag Collect 的验证码</div>
+        <div class="body">1233</div>
+        <div class="footer">验证码有效期 5 分钟</div>
+    </div>
+</body>
+
+</html>
