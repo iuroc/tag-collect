@@ -5,50 +5,32 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"os"
-	"strconv"
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/oyps/gosmtp"
+	"tag-collect/serve/db"
+	"tag-collect/serve/mail"
+	"tag-collect/serve/util"
 )
 
 // 发送邮件
 func SendCode(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	conn := db.GetConn()
+	defer conn.Close()
 	queryParams := r.URL.Query()
 	to := queryParams.Get("to")
 	if to == "" {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Write([]byte("请输入收件人地址 ?to=user@example.com"))
+		w.Write(util.MakeErr("请输入收件人地址，示例：?to=user@example.com"))
 		return
 	}
 	godotenv.Load(".env")
 	verCode := MakeVerCode()
-	port, _ := strconv.Atoi(os.Getenv("smtp_port"))
-	username := os.Getenv("smtp_username")
-	err := gosmtp.SendSmtp(gosmtp.SmtpOption{
-		Host:        os.Getenv("smtp_host"),
-		Port:        port,
-		Username:    username,
-		Password:    os.Getenv("smtp_password"),
-		From:        username,
-		ContentType: "text/html; charset=utf-8",
-		Nick:        "鹏优创邮件服务",
-		To:          []string{to},
-		Subject:     "来自 Tag Collect 的验证码",
-		Body: `
-<div class="card" style="margin: 30px auto; max-width: 400px; border: 1px solid rgba(230, 230, 230); border-radius: 10px; padding: 10px; text-align: center;">
-	<div class="title" style="padding: 20px 0; user-select: none; letter-spacing: 1px; font-size: 20px; font-weight: bold; border-bottom: 1px solid rgba(230, 230, 230);">Tag Collect 的验证码</div>
-	<div class="body" style="padding: 20px 0; font-size: 60px; font-weight: bold; color: #6495ed; border-bottom: 1px solid rgba(230, 230, 230); letter-spacing: 3px;">` + verCode + `</div>
-	<div class="footer" style="padding: 20px 0; user-select: none; letter-spacing: 1px;">验证码有效期 5 分钟</div>
-</div>`,
-	})
-	if err == nil {
-		log.Println("邮件发送成功")
-		w.Write([]byte("邮件发送成功，验证码为：" + verCode))
+	if err := mail.SendVerCode(to, verCode); err != nil {
+		log.Fatal(err)
 	} else {
-		log.Println(err)
-		w.Write([]byte("邮件发送失败"))
+		mail.InsertVerCode(conn, to, verCode)
+		w.Write(util.MakeSuc("邮件发送成功", nil))
 	}
 }
 

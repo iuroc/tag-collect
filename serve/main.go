@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"tag-collect/serve/db"
 	"tag-collect/serve/route"
 )
 
@@ -11,6 +12,7 @@ func main() {
 }
 
 func Main() {
+	db.InitTable()
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
