@@ -1,0 +1,30 @@
+{
+	"name": "tag-collect",
+	"version": "2.0.0",
+	"description": "标签式收藏管理系统",
+	"main": "js/index.js",
+	"scripts": {
+		"start": "go run serve/main.go",
+		"dev": "tsc -w",
+		"build": "browserify static/js/index.js -o static/dist/bundle.js && uglifyjs static/dist/bundle.js --mangle --enclose -o static/dist/bundle.min.js && go run serve/main.go"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/oyps/tag-collect.git"
+	},
+	"author": "欧阳鹏",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/oyps/tag-collect/issues"
+	},
+	"homepage": "https://github.com/oyps/tag-collect#readme",
+	"devDependencies": {
+		"@types/node": "^20.2.5",
+		"browserify": "^17.0.0",
+		"typescript": "^5.0.4",
+		"uglify-js": "^3.17.4"
+	},
+	"dependencies": {
+		"apee-router": "^1.2.1"
+	}
+}

@@ -1,0 +1,8 @@
+{
+    "smpt": {
+        "smptHost": "smtp.exmail.qq.com",
+        "smptPort": 465,
+        "senderEmail": "code@apee.top",
+        "senderPassword": ""
+    }
+}

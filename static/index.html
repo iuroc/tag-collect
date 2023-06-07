@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Tag Collect</title>
+</head>
+
+<body>
+    <div class="container p-4">
+        <div data-route="home">
+            <div class="fs-3 fw-bold mb-4 text-center">Tag Collect</div>
+            <div class="row btn-list"></div>
+            <div class="text-end fixed-bottom p-3">
+                <a href="https://github.com/oyps/tag-collect" class="text-secondary text-decoration-none"
+                    target="_blank">Github：Tag
+                    Collect</a>
+            </div>
+        </div>
+        <div data-route="add"></div>
+        <div data-route="list"></div>
+        <div data-route="tag"></div>
+        <div data-route="user"></div>
+        <div data-route="login" class="mx-auto sm-width">
+            <div class="login-box" style="display: none;">
+                <div class="fs-3 text-center fw-bold mb-4">用户登录</div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" placeholder="username">
+                    <label>请输入账号</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" autocomplete="new-password" class="form-control" placeholder="username">
+                    <label>请输入密码</label>
+                </div>
+                <div class="input-group mb-4">
+                    <input type="text" class="">
+                </div>
+            </div>
+            <div class="register-box" style="display: none;">
+                <div class="fs-3 text-center fw-bold">用户注册</div>
+            </div>
+        </div>
+
+    </div>
+    <script src="static/dist/bundle.min.js"></script>
+</body>
+
+</html>

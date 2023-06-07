@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.router = void 0;
+var apee_router_1 = require("apee-router");
+var home_1 = require("./route/home");
+var login_1 = require("./route/login");
+exports.router = new apee_router_1.Router();
+exports.router.set(['home', 'add', 'list', 'tag', 'user', 'login']);
+exports.router.set('home', home_1.home);
+exports.router.set('login', login_1.login);
+exports.router.start();
+(0, login_1.checkLogin)();

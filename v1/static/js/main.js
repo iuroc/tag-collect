@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var apee_router_1 = require("apee-router");
+var add_1 = require("./route/add");
+var home_1 = require("./route/home");
+var tag_1 = require("./route/tag");
+var template_1 = require("./template");
+var router = new apee_router_1.default();
+router.set(['home', 'add', 'list', 'tag', 'user']);
+router.set('home', home_1.default);
+router.set('add', add_1.default);
+router.set('tag', tag_1.default);
+router.start();
+(0, template_1.loadTemplate)(router);
