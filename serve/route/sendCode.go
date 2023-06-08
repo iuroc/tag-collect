@@ -2,15 +2,15 @@ package route
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 	"time"
 
-	"github.com/joho/godotenv"
 	"tag-collect/serve/db"
 	"tag-collect/serve/mail"
 	"tag-collect/serve/util"
+
+	"github.com/joho/godotenv"
 )
 
 // 发送邮件
@@ -24,14 +24,25 @@ func SendCode(w http.ResponseWriter, r *http.Request) {
 		w.Write(util.MakeErr("请输入收件人地址，示例：?to=user@example.com"))
 		return
 	}
+	// 判断是否频繁请求发送验证码
+	if !db.CheckVerCodeAllow(conn, to) {
+		w.Write(util.MakeErr("请勿频繁请求发送验证码"))
+		return
+	}
+
 	godotenv.Load(".env")
 	verCode := MakeVerCode()
+	// 发送验证码
 	if err := mail.SendVerCode(to, verCode); err != nil {
-		log.Fatal(err)
-	} else {
-		mail.InsertVerCode(conn, to, verCode)
-		w.Write(util.MakeSuc("邮件发送成功", nil))
+		w.Write(util.MakeErr(err.Error()))
+		return
 	}
+	// 插入验证码记录
+	if err := db.InsertVerCode(conn, to, verCode); err != nil {
+		w.Write(util.MakeErr(err.Error()))
+		return
+	}
+	w.Write(util.MakeSuc("验证码已经成功发送到您的邮箱，请注意查收", nil))
 }
 
 // 生成验证码
