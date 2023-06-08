@@ -7,7 +7,7 @@ var user = function (route) {
         var clickLogout = route.dom.querySelector('.click-logout');
         clickLogout.addEventListener('click', function () {
             localStorage.removeItem('expires');
-            location.reload();
+            location.href = '/logout';
         });
     }
 };

@@ -7,7 +7,7 @@ export const user: RouteEvent = (route) => {
         const clickLogout = route.dom.querySelector('.click-logout') as HTMLButtonElement
         clickLogout.addEventListener('click', () => {
             localStorage.removeItem('expires')
-            location.reload()
+            location.href = '/logout'
         })
     }
 }

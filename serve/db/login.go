@@ -31,13 +31,18 @@ func CheckLogin(conn *sql.DB, usernameOrEmail string, passwordMd5 string) bool {
 }
 
 // 校验 Token
-func CheckToken(conn *sql.DB, token string) {
-
+func CheckToken(conn *sql.DB, token string) (bool, error) {
+	var count int
+	err := conn.QueryRow("SELECT COUNT(*) FROM tag_collect_token WHERE token = ?", token).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }
 
-// 移除验证码记录
-func RemoveToken(conn *sql.DB, username string) error {
-	_, err := conn.Exec("DELETE FROM tag_collect_token WHERE username = '" + username + "'")
+// 移除 Token 记录
+func RemoveToken(conn *sql.DB, tokenOrUsername string) error {
+	_, err := conn.Exec("DELETE FROM tag_collect_token WHERE token = ? OR username = ?", tokenOrUsername, tokenOrUsername)
 	return err
 }
 
