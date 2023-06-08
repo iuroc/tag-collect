@@ -42,6 +42,8 @@ func SendCode(w http.ResponseWriter, r *http.Request) {
 		w.Write(util.MakeErr(err.Error()))
 		return
 	}
+
+
 	w.Write(util.MakeSuc("验证码已经成功发送到您的邮箱，请注意查收", nil))
 }
 

@@ -29,22 +29,48 @@
             <div class="login-box" style="display: none;">
                 <div class="fs-3 text-center fw-bold mb-4">用户登录</div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" placeholder="username">
-                    <label>请输入账号</label>
+                    <input type="text" class="form-control input-username" placeholder="username">
+                    <label>请输入用户名或邮箱</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" autocomplete="new-password" class="form-control" placeholder="username">
+                    <input type="password" autocomplete="new-password" class="form-control input-password"
+                        placeholder="username">
                     <label>请输入密码</label>
                 </div>
                 <div class="input-group mb-4">
-                    <input type="email" class="form-control" placeholder="请输入邮箱地址">
-                    <button class="btn btn-success">获取验证码</button>
+                    <input type="text" class="form-control input-vercode" placeholder="请输入验证码">
+                    <button class="btn btn-success get-vercode">获取验证码</button>
                 </div>
-                <button class="btn btn-primary me-3 px-5">登录</button>
+                <button class="btn btn-primary me-3 px-5 click-login">登录</button>
                 <a class="btn btn-light border" href="#/login/register">注册</a>
             </div>
             <div class="register-box" style="display: none;">
-                <div class="fs-3 text-center fw-bold">用户注册</div>
+                <div class="fs-3 text-center fw-bold mb-4">用户注册</div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control input-username" placeholder="username">
+                    <label>请输入账号</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" autocomplete="new-password" class="form-control input-password"
+                        placeholder="username">
+                    <label>请输入密码</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" autocomplete="new-password" class="form-control input-repeat-password"
+                        placeholder="username">
+                    <label>请重复输入密码</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="email" autocomplete="new-password" class="form-control input-email"
+                        placeholder="email">
+                    <label>请输入邮箱地址</label>
+                </div>
+                <div class="input-group mb-4">
+                    <input type="text" class="form-control input-vercode" placeholder="请输入验证码">
+                    <button class="btn btn-success get-vercode">获取验证码</button>
+                </div>
+                <button class="btn btn-primary me-3 px-5 click-register">注册</button>
+                <a class="btn btn-light border" href="#/login">登录</a>
             </div>
         </div>
 

@@ -1,6 +1,8 @@
 package util
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"encoding/json"
 )
 
@@ -44,4 +46,14 @@ func MakeSuc(msg string, data interface{}) []byte {
 func MakeErr(msg string) []byte {
 	str, _ := MakeRes(0, msg, nil)
 	return []byte(str)
+}
+
+func MakeToken(tokenLength int) (string, error) {
+	randomBytes := make([]byte, tokenLength)
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		return "", err
+	}
+	token := base64.URLEncoding.EncodeToString(randomBytes)
+	return token, nil
 }

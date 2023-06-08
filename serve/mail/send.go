@@ -2,6 +2,7 @@ package mail
 
 import (
 	"fmt"
+	"log"
 	"net/smtp"
 	"os"
 	"strconv"
@@ -42,7 +43,10 @@ func EasySend(option SmtpOption) error {
 // 发送验证码
 func SendVerCode(to string, verCode string) error {
 	godotenv.Load(".env")
-	port, _ := strconv.Atoi(os.Getenv("smtp_port"))
+	port, err := strconv.Atoi(os.Getenv("smtp_port"))
+	if err != nil {
+		log.Fatal(err)
+	}
 	return EasySend(SmtpOption{
 		Host:     os.Getenv("smtp_host"),
 		Port:     port,

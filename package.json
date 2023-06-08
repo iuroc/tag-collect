@@ -19,12 +19,14 @@
 	},
 	"homepage": "https://github.com/oyps/tag-collect#readme",
 	"devDependencies": {
+		"@types/md5": "^2.3.2",
 		"@types/node": "^20.2.5",
 		"browserify": "^17.0.0",
 		"typescript": "^5.0.4",
 		"uglify-js": "^3.17.4"
 	},
 	"dependencies": {
-		"apee-router": "^1.2.1"
+		"apee-router": "^1.2.1",
+		"md5": "^2.3.0"
 	}
 }
