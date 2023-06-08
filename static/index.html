@@ -10,7 +10,7 @@
     <title>Tag Collect</title>
 </head>
 
-<body>
+<body ondragstart="return false" class="text-break user-select-none">
     <div class="container p-4">
         <div data-route="home">
             <div class="fs-3 fw-bold mb-4 text-center">Tag Collect</div>
@@ -21,10 +21,17 @@
                     Collect</a>
             </div>
         </div>
-        <div data-route="add"></div>
-        <div data-route="list"></div>
-        <div data-route="tag"></div>
+        <div data-route="add">
+            <back-nav>新增收藏</back-nav>
+        </div>
+        <div data-route="list">
+            <back-nav>收藏列表</back-nav>
+        </div>
+        <div data-route="tag">
+            <back-nav>标签列表</back-nav>
+        </div>
         <div data-route="user">
+            <back-nav>个人中心</back-nav>
             <button class="btn btn-danger click-logout">退出登录</button>
         </div>
         <div data-route="login" class="mx-auto sm-width">

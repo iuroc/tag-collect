@@ -496,6 +496,7 @@ var apee_router_1 = require("apee-router");
 var home_1 = require("./route/home");
 var login_1 = require("./route/login");
 var user_1 = require("./route/user");
+var template_1 = require("./template");
 exports.router = new apee_router_1.Router();
 exports.router.set(['home', 'add', 'list', 'tag', 'user', 'login']);
 exports.router.set('home', home_1.home);
@@ -503,8 +504,9 @@ exports.router.set('login', login_1.login);
 exports.router.set('user', user_1.user);
 exports.router.start();
 (0, login_1.checkLogin)();
+(0, template_1.loadTemplate)(exports.router);
 
-},{"./route/home":7,"./route/login":8,"./route/user":9,"apee-router":1}],7:[function(require,module,exports){
+},{"./route/home":7,"./route/login":8,"./route/user":9,"./template":10,"apee-router":1}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.home = void 0;
@@ -744,7 +746,7 @@ function clickRegister() {
     });
 }
 
-},{"..":6,"../util":10,"md5":5}],9:[function(require,module,exports){
+},{"..":6,"../util":11,"md5":5}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.user = void 0;
@@ -761,6 +763,49 @@ var user = function (route) {
 exports.user = user;
 
 },{}],10:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.loadTemplate = void 0;
+function loadTemplate(router) {
+    loadBackNav(router);
+    loadSubTitle();
+}
+exports.loadTemplate = loadTemplate;
+/**
+ * 加载带返回按钮的顶栏
+ * @param router 路由管理器对象，用于实现返回上一级历史记录
+ */
+function loadBackNav(router) {
+    /** 返回上一级事件 */
+    var backEvent = function () {
+        // 如果发生过 hashChange 事件，则返回上一级，否则转到空路由
+        if (router.hashChanged)
+            history.back();
+        else
+            location.hash = '';
+    };
+    document.querySelectorAll('back-nav').forEach(function (ele) {
+        var _a;
+        var title = ele.innerHTML;
+        var newEle = document.createElement('div');
+        newEle.classList.add('d-flex', 'mb-4', 'align-items-center');
+        newEle.innerHTML = "\n            <img src=\"/static/img/arrow-left-circle.svg\" class=\"cursor-pointer size-32 back-btn\">\n            <div class=\"fs-3 fw-bold ms-3\">".concat(title, "</div>");
+        (_a = newEle.querySelector('.back-btn')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', backEvent);
+        ele.replaceWith(newEle);
+    });
+}
+/** 加载带图标的小标题 */
+function loadSubTitle() {
+    document.querySelectorAll('sub-title').forEach(function (ele) {
+        var title = ele.innerHTML;
+        var newEle = document.createElement('div');
+        newEle.classList.add('d-flex', 'mb-4', 'align-items-center');
+        newEle.innerHTML = "\n            <img src=\"/static/img/tags.svg\" class=\"cursor-pointer size-20 back-btn\">\n            <div class=\"fs-5 fw-bold ms-2\">".concat(title, "</div>");
+        ele.replaceWith(newEle);
+    });
+}
+
+},{}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkEmail = void 0;
