@@ -32,9 +32,5 @@ func CheckVerCode(conn *sql.DB, email string, verCode string) bool {
 	var count int
 	stmp, _ := conn.Prepare("SELECT COUNT(*) FROM tag_collect_ver_code WHERE email = ? AND ver_code = ? AND create_time >= (CURRENT_TIMESTAMP - INTERVAL 5 MINUTE)")
 	stmp.QueryRow(email, verCode).Scan(&count)
-	if count > 0 {
-		// 校验成功，移除验证码记录
-		RemoveVerCode(conn, email)
-	}
 	return count > 0
 }

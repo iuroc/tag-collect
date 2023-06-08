@@ -87,19 +87,57 @@ var login = function (route) {
     if (route.status == 0) {
         route.status = 1;
         registerSubEles.register.addEventListener('click', clickRegister);
-        registerSubEles.getVerCode.addEventListener('click', function () { return clickGetVerCode(registerSubEles, registerSubEles.email); });
+        registerSubEles.getVerCode.addEventListener('click', function () {
+            var email = registerSubEles.email.value;
+            if (!(0, util_1.checkEmail)(email))
+                return alert('输入的邮箱格式错误，请检查后重新输入');
+            clickGetVerCode(registerSubEles, email);
+        });
         loginSubEles.login.addEventListener('click', clickLogin);
-        loginSubEles.getVerCode.addEventListener('click', function () { return clickGetVerCode(loginSubEles, loginSubEles.username); });
+        loginSubEles.getVerCode.addEventListener('click', function () {
+            var username = loginSubEles.username.value;
+            if (!username.match(/^\w{4,20}$/) && !(0, util_1.checkEmail)(username))
+                return alert('用户名或邮箱格式错误');
+            clickGetVerCode(loginSubEles, username, true);
+        });
     }
 };
 exports.login = login;
 /** 点击登录 */
 function clickLogin() {
+    var username = loginSubEles.username.value;
+    var password = loginSubEles.password.value;
+    var verCode = loginSubEles.verCode.value;
+    if (!username.match(/^\w{4,20}$/) && !(0, util_1.checkEmail)(username))
+        return alert('用户名或邮箱格式错误');
+    if (!password.match(/^\S{6,20}$/))
+        return alert('密码必须是 6-20 位字符串');
+    if (verCode.match(/^\s*$/))
+        return alert('验证码不能为空');
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/login');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    var params = new URLSearchParams();
+    params.set('username', username);
+    params.set('passwordMd5', md5(password));
+    params.set('verCode', verCode);
+    xhr.send(params.toString());
+    xhr.addEventListener('readystatechange', function () {
+        if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
+            var res = JSON.parse(xhr.responseText);
+            if (res.code == 200) {
+                alert('登录成功');
+                var expires = res.data.expires;
+                localStorage.setItem('expires', expires);
+                location.hash = '';
+                return;
+            }
+            alert(res.msg);
+        }
+    });
 }
-function clickGetVerCode(eles, emailInputEle) {
-    var email = emailInputEle.value;
-    if (!(0, util_1.checkEmail)(email))
-        return alert('输入的邮箱格式错误，请检查后重新输入');
+function clickGetVerCode(eles, userOrEmail, login) {
+    if (login === void 0) { login = false; }
     eles.getVerCode.setAttribute('disabled', 'disabled');
     eles.getVerCode.innerHTML = '正在发送';
     /** 修改加载中状态 */
@@ -112,7 +150,7 @@ function clickGetVerCode(eles, emailInputEle) {
         eles.getVerCode.removeAttribute('disabled');
     }
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/api/sendCode?to=' + email);
+    xhr.open('GET', "/api/sendCode?to=".concat(userOrEmail, "&login=").concat(login));
     xhr.send();
     xhr.addEventListener('readystatechange', function () {
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
@@ -160,6 +198,7 @@ function clickRegister() {
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
             var res = JSON.parse(xhr.responseText);
             if (res.code == 200) {
+                alert('注册成功，即将自动登录');
                 var expires = res.data.expires;
                 localStorage.setItem('expires', expires);
                 location.hash = '';

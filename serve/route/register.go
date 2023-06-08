@@ -41,12 +41,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 	data := make(map[string]interface{})
 	data["expires"] = SetTokenCookie(w, token)
+	// 校验成功，移除验证码记录
+	db.RemoveVerCode(conn, email)
 	w.Write(util.MakeSuc("注册成功", data))
 }
 
 // 设置 Cookie-Token, 返回 13 位的 expires 时间戳
 func SetTokenCookie(w http.ResponseWriter, token string) int {
-	
+
 	expires := time.Now().Add(30 * 24 * time.Hour)
 	cookie := &http.Cookie{
 		Name:     "token",

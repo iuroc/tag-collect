@@ -20,7 +20,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	verCode := r.Form.Get("verCode")
 	email, err := db.GetUserEmail(conn, username)
 	if err != nil {
-		log.Fatal(err)
+		w.Write(util.MakeErr("用户不存在，请检查用户名或邮箱"))
+		return
 	}
 	if !db.CheckVerCode(conn, email, verCode) {
 		w.Write(util.MakeErr("验证码错误，请重新填写"))
@@ -36,5 +37,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	data := make(map[string]interface{})
 	data["expires"] = SetTokenCookie(w, token)
+	// 校验成功，移除验证码记录
+	db.RemoveVerCode(conn, email)
 	w.Write(util.MakeSuc("登录成功", data))
 }

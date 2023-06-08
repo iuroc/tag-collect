@@ -25,7 +25,7 @@ func InsertToken(conn *sql.DB, username string) (string, error) {
 // 校验登录（账号密码）
 func CheckLogin(conn *sql.DB, usernameOrEmail string, passwordMd5 string) bool {
 	var count int
-	conn.QueryRow("SELECT COUNT(*) FROM tag_collect_user WHERE (username = ? OR email = ?) AND password_md5 = '?'",
+	conn.QueryRow("SELECT COUNT(*) FROM tag_collect_user WHERE (username = ? OR email = ?) AND password_md5 = ?",
 		usernameOrEmail, usernameOrEmail, passwordMd5).Scan(&count)
 	return count > 0
 }

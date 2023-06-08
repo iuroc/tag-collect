@@ -84,20 +84,56 @@ export const login: RouteEvent = (route) => {
     if (route.status == 0) {
         route.status = 1
         registerSubEles.register.addEventListener('click', clickRegister)
-        registerSubEles.getVerCode.addEventListener('click', () => clickGetVerCode(registerSubEles, registerSubEles.email))
+        registerSubEles.getVerCode.addEventListener('click', () => {
+            let email = registerSubEles.email.value
+            if (!checkEmail(email)) return alert('输入的邮箱格式错误，请检查后重新输入')
+            clickGetVerCode(registerSubEles, email)
+        })
         loginSubEles.login.addEventListener('click', clickLogin)
-        loginSubEles.getVerCode.addEventListener('click', () => clickGetVerCode(loginSubEles, loginSubEles.username))
+        loginSubEles.getVerCode.addEventListener('click', () => {
+            let username = loginSubEles.username.value
+            if (!username.match(/^\w{4,20}$/) && !checkEmail(username))
+                return alert('用户名或邮箱格式错误')
+            clickGetVerCode(loginSubEles, username, true)
+        })
     }
 }
 
 /** 点击登录 */
 function clickLogin() {
-
+    let username = loginSubEles.username.value
+    let password = loginSubEles.password.value
+    let verCode = loginSubEles.verCode.value
+    if (!username.match(/^\w{4,20}$/) && !checkEmail(username))
+        return alert('用户名或邮箱格式错误')
+    if (!password.match(/^\S{6,20}$/)) return alert('密码必须是 6-20 位字符串')
+    if (verCode.match(/^\s*$/)) return alert('验证码不能为空')
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', '/api/login')
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+    const params = new URLSearchParams()
+    params.set('username', username)
+    params.set('passwordMd5', md5(password))
+    params.set('verCode', verCode)
+    xhr.send(params.toString())
+    xhr.addEventListener('readystatechange', () => {
+        if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
+            const res = JSON.parse(xhr.responseText) as AjaxRes
+            if (res.code == 200) {
+                alert('登录成功')
+                let expires = res.data.expires as string
+                localStorage.setItem('expires', expires)
+                location.hash = ''
+                return
+            }
+            alert(res.msg)
+        }
+    })
 }
 
-function clickGetVerCode(eles: { [key: string]: HTMLDivElement | HTMLButtonElement }, emailInputEle: HTMLInputElement) {
-    let email = emailInputEle.value
-    if (!checkEmail(email)) return alert('输入的邮箱格式错误，请检查后重新输入')
+function clickGetVerCode(eles: { [key: string]: HTMLDivElement | HTMLButtonElement },
+    userOrEmail: string, login: boolean = false) {
+
     eles.getVerCode.setAttribute('disabled', 'disabled')
     eles.getVerCode.innerHTML = '正在发送'
 
@@ -113,7 +149,7 @@ function clickGetVerCode(eles: { [key: string]: HTMLDivElement | HTMLButtonEleme
     }
 
     const xhr = new XMLHttpRequest()
-    xhr.open('GET', '/api/sendCode?to=' + email)
+    xhr.open('GET', `/api/sendCode?to=${userOrEmail}&login=${login}`)
     xhr.send()
     xhr.addEventListener('readystatechange', () => {
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
@@ -156,6 +192,7 @@ function clickRegister() {
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
             const res = JSON.parse(xhr.responseText) as AjaxRes
             if (res.code == 200) {
+                alert('注册成功，即将自动登录')
                 let expires = res.data.expires as string
                 localStorage.setItem('expires', expires)
                 location.hash = ''
