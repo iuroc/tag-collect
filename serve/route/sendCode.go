@@ -2,6 +2,7 @@ package route
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"time"
@@ -24,8 +25,12 @@ func SendCode(w http.ResponseWriter, r *http.Request) {
 		w.Write(util.MakeErr("请输入收件人地址，示例：?to=user@example.com"))
 		return
 	}
+	email, err := db.GetUserEmail(conn, to)
+	if email == "" || err != nil {
+		email = to
+	}
 	// 判断是否频繁请求发送验证码
-	if !db.CheckVerCodeAllow(conn, to) {
+	if !db.CheckVerCodeAllow(conn, email) {
 		w.Write(util.MakeErr("请勿频繁请求发送验证码"))
 		return
 	}
@@ -33,16 +38,14 @@ func SendCode(w http.ResponseWriter, r *http.Request) {
 	godotenv.Load(".env")
 	verCode := MakeVerCode()
 	// 发送验证码
-	if err := mail.SendVerCode(to, verCode); err != nil {
-		w.Write(util.MakeErr(err.Error()))
+	if err := mail.SendVerCode(email, verCode); err != nil {
+		w.Write(util.MakeErr("邮件发送失败"))
 		return
 	}
 	// 插入验证码记录
-	if err := db.InsertVerCode(conn, to, verCode); err != nil {
-		w.Write(util.MakeErr(err.Error()))
-		return
+	if err := db.InsertVerCode(conn, email, verCode); err != nil {
+		log.Fatal(err)
 	}
-
 
 	w.Write(util.MakeSuc("验证码已经成功发送到您的邮箱，请注意查收", nil))
 }

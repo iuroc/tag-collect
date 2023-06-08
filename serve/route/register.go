@@ -1,7 +1,6 @@
 package route
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"tag-collect/serve/db"
@@ -40,6 +39,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	data := make(map[string]interface{})
+	data["expires"] = SetTokenCookie(w, token)
+	w.Write(util.MakeSuc("注册成功", data))
+}
+
+// 设置 Cookie-Token, 返回 13 位的 expires 时间戳
+func SetTokenCookie(w http.ResponseWriter, token string) int {
+	
 	expires := time.Now().Add(30 * 24 * time.Hour)
 	cookie := &http.Cookie{
 		Name:     "token",
@@ -49,7 +56,5 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 	}
 	http.SetCookie(w, cookie)
-	data := make(map[string]string)
-	data["expires"] = fmt.Sprint(expires.UnixNano() / int64(time.Millisecond))
-	w.Write(util.MakeSuc("注册成功", data))
+	return int(expires.UnixNano() / int64(time.Millisecond))
 }
