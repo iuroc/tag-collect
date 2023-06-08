@@ -1,13 +1,11 @@
 package db
 
 import (
-	"log"
-
 	_ "github.com/go-sql-driver/mysql"
 )
 
 // 初始化数据表
-func InitTable() {
+func InitTable() error {
 	conn := GetConn()
 	defer conn.Close()
 
@@ -18,7 +16,7 @@ func InitTable() {
 			email VARCHAR(255) NOT NULL COMMENT '邮箱',
 			create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
 		)`); err != nil {
-		log.Fatal(err)
+		return err
 	}
 	if _, err := conn.Exec(`
 		CREATE TABLE IF NOT EXISTS tag_collect_collect (
@@ -30,7 +28,7 @@ func InitTable() {
             create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
             update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间'
 		)`); err != nil {
-		log.Fatal(err)
+		return err
 	}
 	if _, err := conn.Exec(`
 		CREATE TABLE IF NOT EXISTS tag_collect_ver_code (
@@ -38,6 +36,15 @@ func InitTable() {
 			create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
 			ver_code VARCHAR(255) NOT NULL COMMENT '验证码内容'
 		)`); err != nil {
-		log.Fatal(err)
+		return err
 	}
+	if _, err := conn.Exec(`
+		CREATE TABLE IF NOT EXISTS tag_collect_token (
+			username VARCHAR(255) NOT NULL COMMENT '用户名',
+			token VARCHAR(255) NOT NULL COMMENT '密钥',
+			create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'
+		)`); err != nil {
+		return err
+	}
+	return nil
 }

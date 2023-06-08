@@ -19,6 +19,7 @@ func Main() {
 		http.ServeFile(w, r, "static/index.html")
 	})
 	http.HandleFunc("/api/sendCode", route.SendCode)
+	http.HandleFunc("/api/register", route.Register)
 	fmt.Println("http://localhost:8080")
 	http.ListenAndServe("localhost:8080", nil)
 }
