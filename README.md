@@ -27,14 +27,8 @@
 
 - 安装依赖：`npm install`
 - 启动开发环境：`npm run dev`
-- 打包并启动服务：`npm run build`
-- 启动服务：`npm start`（非开发环境）
-
-### 开发时姿势
-
-- 安装依赖：`npm install`
-- 启动开发环境：`npm run dev`
-- 每次修改完代码，执行 `npm run build`
+- 每次修改完前端，执行 `npm run build`
+- 每次修改完后端，执行 `npm run serve`
 
 ## 项目文件结构
 

@@ -4,9 +4,9 @@
 	"description": "标签式收藏管理系统",
 	"main": "js/index.js",
 	"scripts": {
-		"start": "go run serve/main.go",
+		"serve": "go run serve/main.go",
 		"dev": "tsc -w",
-		"build": "browserify static/js/index.js -o static/dist/bundle.js && uglifyjs static/dist/bundle.js --mangle --enclose -o static/dist/bundle.min.js && go run serve/main.go"
+		"build": "browserify static/js/index.js -o static/dist/bundle.js && uglifyjs static/dist/bundle.js --mangle --enclose -o static/dist/bundle.min.js"
 	},
 	"repository": {
 		"type": "git",
