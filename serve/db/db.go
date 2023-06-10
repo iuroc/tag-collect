@@ -3,10 +3,10 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"log"
 	"os"
-	_ "github.com/go-sql-driver/mysql"
 )
 
 // 获取数据库连接
@@ -26,7 +26,6 @@ func GetConn() *sql.DB {
 	}
 	return conn
 }
-
 
 // 初始化数据表
 func InitTable() error {
@@ -51,6 +50,20 @@ func InitTable() error {
             username TEXT NOT NULL COMMENT '创建者用户名',
             create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
             update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间'
+		) COLLATE utf8mb4_bin`); err != nil {
+		return err
+	}
+	if _, err := conn.Exec(`
+		CREATE TABLE IF NOT EXISTS tag_collect_tag (
+			id INT(11) AUTO_INCREMENT PRIMARY KEY COMMENT '标签 ID',
+            name VARCHAR(255) NOT NULL COMMENT '标签名称'
+		) COLLATE utf8mb4_bin`); err != nil {
+		return err
+	}
+	if _, err := conn.Exec(`
+		CREATE TABLE IF NOT EXISTS tag_collect_tag_of_collect (
+			tag_id INT(11) NOT NULL COMMENT '标签 ID',
+            collect_id INT(11) NOT NULL COMMENT '收藏 ID'
 		) COLLATE utf8mb4_bin`); err != nil {
 		return err
 	}

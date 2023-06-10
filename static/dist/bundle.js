@@ -524,7 +524,7 @@ exports.router.set('login', login_1.login);
 exports.router.set('user', user_1.user);
 exports.router.set('add', add_1.add);
 exports.router.start();
-// checkLogin()
+(0, login_1.checkLogin)();
 (0, template_1.loadTemplate)(exports.router);
 
 },{"./route/add":8,"./route/home":9,"./route/login":10,"./route/user":11,"./template":12,"apee-router":1}],8:[function(require,module,exports){
@@ -689,16 +689,6 @@ var util_1 = require("../util");
  * 校验登录
  * @param event 事件对象
  *
- * **登录校验机制**
- * 1. 前端传入账号和密文密码
- * 2. 后端数据库存储账号和密文密码
- * 3. 后端校验账号和密文密码
- * 4. 校验成功后，后端生成 `Token` 并存入数据库
- * 5. 后端返回 `Cookie-Token` 和 `Response-Token-Expires(13)`
- * 6. 前端通过 `Token` 存在性和 `Expires` 初步判断登录状态
- * 7. 每个 HTTP API 都对 `Cookie-Token` 进行校验
- * 8. 后端校验失败，返回错误信息，清除 `Cookie`
- * 9. 前端获得错误信息，清除本地存储中的 `Token` 和 `Expires`
  */
 function checkLogin(event) {
     /** 校验失败 */
