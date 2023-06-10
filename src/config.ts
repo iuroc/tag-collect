@@ -13,7 +13,9 @@ export const apiConfig = {
     /** 发送验证码 */
     sendCode: '/api/sendCode',
     /** 加载标签列表，可搜索 */
-    tagList: '/api/tagList'
+    tagList: '/api/tagList',
+    /** 加载收藏列表，可搜索 */
+    collectList: '/api/collectList'
 }
 
 /** 网站配置 */

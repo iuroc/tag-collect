@@ -507,7 +507,9 @@ exports.apiConfig = {
     /** 发送验证码 */
     sendCode: '/api/sendCode',
     /** 加载标签列表，可搜索 */
-    tagList: '/api/tagList'
+    tagList: '/api/tagList',
+    /** 加载收藏列表，可搜索 */
+    collectList: '/api/collectList'
 };
 /** 网站配置 */
 exports.config = {
@@ -524,6 +526,7 @@ var home_1 = require("./route/home");
 var login_1 = require("./route/login");
 var user_1 = require("./route/user");
 var add_1 = require("./route/add");
+var list_1 = require("./route/list");
 var template_1 = require("./template");
 exports.router = new apee_router_1.Router();
 exports.router.set(['home', 'add', 'list', 'tag', 'user', 'login']);
@@ -531,11 +534,12 @@ exports.router.set('home', home_1.home);
 exports.router.set('login', login_1.login);
 exports.router.set('user', user_1.user);
 exports.router.set('add', add_1.add);
-exports.router.start();
+exports.router.set('list', list_1.list);
 (0, login_1.checkLogin)();
 (0, template_1.loadTemplate)(exports.router);
+exports.router.start();
 
-},{"./route/add":8,"./route/home":9,"./route/login":10,"./route/user":11,"./template":12,"apee-router":1}],8:[function(require,module,exports){
+},{"./route/add":8,"./route/home":9,"./route/list":10,"./route/login":11,"./route/user":12,"./template":13,"apee-router":1}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.add = void 0;
@@ -643,7 +647,7 @@ var add = function (route) {
          */
         var makeNewTag_1 = function (tag, color) {
             var newTagEle = document.createElement('div');
-            newTagEle.classList.add("list-group-item", "list-group-item-action", "list-group-item-" + color);
+            newTagEle.classList.add('list-group-item', 'list-group-item-action', 'list-group-item-' + color);
             newTagEle.innerHTML = tag;
             return newTagEle;
         };
@@ -745,7 +749,7 @@ var add = function (route) {
             var url = elementGroup_1.input.url.value;
             var title = elementGroup_1.input.title.value;
             var text = elementGroup_1.textarea.text.value;
-            if (url.match(/^\s*$/) && text.match(/^\s*$/)) {
+            if (!!url.match(/^\s*$/) && !!text.match(/^\s*$/)) {
                 return alert('URL 和描述文本不能同时为空');
             }
             var xhr = new XMLHttpRequest();
@@ -772,7 +776,7 @@ var add = function (route) {
 };
 exports.add = add;
 
-},{"../config":6,"../util":13}],9:[function(require,module,exports){
+},{"../config":6,"../util":14}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.home = void 0;
@@ -801,6 +805,50 @@ var home = function (route) {
 exports.home = home;
 
 },{}],10:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.list = void 0;
+var config_1 = require("../config");
+/** `hash = #/list` */
+var list = function (route) {
+    if (route.status == 0) {
+        route.status = 1;
+        var collectListEle_1 = route.dom.querySelector('.collect-list');
+        var loadCollectList = function (page, pageSize, keyword) {
+            if (page === void 0) { page = 0; }
+            if (pageSize === void 0) { pageSize = 36; }
+            if (keyword === void 0) { keyword = ''; }
+            if (page == 0)
+                collectListEle_1.innerHTML = '';
+            var xhr = new XMLHttpRequest();
+            var params = new URLSearchParams();
+            params.set('page', page.toString());
+            params.set('pageSize', pageSize.toString());
+            params.set('keyword', keyword);
+            xhr.open('GET', "".concat(config_1.apiConfig.collectList, "?").concat(params.toString()));
+            xhr.send();
+            xhr.addEventListener('readystatechange', function () {
+                if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
+                    var res = JSON.parse(xhr.responseText);
+                    if (res.code == 200) {
+                        var list_1 = res.data;
+                        var html_1 = '';
+                        list_1.forEach(function (item) {
+                            html_1 += "\n                                <div class=\"col-md-6 col-xl-4 h-100 mb-4\">\n                                    <div class=\"card card-body border border-2 rounded-4 hover-shadow shadow-sm list-group-item-action\">\n                                        <div class=\"fs-5 fw-bold mb-2\">".concat(item.title, "</div>\n                                        <div class=\"text-muted small\">").concat(item.url, "</div>\n                                        <div class=\"text-muted\">").concat(item.text, "</div>\n                                    </div>\n                                </div>");
+                        });
+                        collectListEle_1.innerHTML += html_1;
+                        return;
+                    }
+                    alert(res.msg);
+                }
+            });
+        };
+        loadCollectList();
+    }
+};
+exports.list = list;
+
+},{"../config":6}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.login = exports.checkLogin = void 0;
@@ -1016,7 +1064,7 @@ function clickRegister() {
     });
 }
 
-},{"..":7,"../config":6,"../util":13,"md5":5}],11:[function(require,module,exports){
+},{"..":7,"../config":6,"../util":14,"md5":5}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.user = void 0;
@@ -1032,7 +1080,7 @@ var user = function (route) {
 };
 exports.user = user;
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loadTemplate = void 0;
@@ -1044,6 +1092,7 @@ exports.loadTemplate = loadTemplate;
 /**
  * 加载带返回按钮的顶栏
  * @param router 路由管理器对象，用于实现返回上一级历史记录
+ * @param isRow 是否使用响应式栅栏
  */
 function loadBackNav(router) {
     /** 返回上一级事件 */
@@ -1063,6 +1112,16 @@ function loadBackNav(router) {
         (_a = newEle.querySelector('.back-btn')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', backEvent);
         ele.replaceWith(newEle);
     });
+    document.querySelectorAll('back-nav-row').forEach(function (ele) {
+        var _a;
+        var title = ele.innerHTML;
+        var newEle = document.createElement('dvi');
+        newEle.classList.add('row');
+        var html = "\n            <div class=\"col-xl-8 col-lg-7 col-md-6\">\n                <div class=\"d-flex mb-4 align-items-center back-nav\">\n                    <img src=\"/static/img/arrow-left-circle.svg\" class=\"cursor-pointer size-32 back-btn\">\n                    <div class=\"fs-3 fw-bold ms-3\">".concat(title, "</div>\n                </div>\n            </div>\n            <div class=\"col-xl-4 col-lg-5 col-md-6 mb-4\">\n                <div class=\"input-group shadow-sm rounded input-group\">\n                    <input type=\"text\" placeholder=\"\u8BF7\u8F93\u5165\u641C\u7D22\u5173\u952E\u8BCD\" class=\"form-control\">\n                    <button class=\"btn btn-success\">\u641C\u7D22</button>\n                </div>\n            </div>");
+        newEle.innerHTML = html;
+        (_a = newEle.querySelector('.back-btn')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', backEvent);
+        ele.replaceWith(newEle);
+    });
 }
 /** 加载带图标的小标题 */
 function loadSubTitle() {
@@ -1075,7 +1134,7 @@ function loadSubTitle() {
     });
 }
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkUrl = exports.checkEmail = void 0;

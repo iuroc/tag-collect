@@ -105,7 +105,7 @@ var add = function (route) {
          */
         var makeNewTag_1 = function (tag, color) {
             var newTagEle = document.createElement('div');
-            newTagEle.classList.add("list-group-item", "list-group-item-action", "list-group-item-" + color);
+            newTagEle.classList.add('list-group-item', 'list-group-item-action', 'list-group-item-' + color);
             newTagEle.innerHTML = tag;
             return newTagEle;
         };

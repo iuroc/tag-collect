@@ -106,7 +106,7 @@ export const add: RouteEvent = (route) => {
          */
         const makeNewTag = (tag: string, color: string) => {
             const newTagEle = document.createElement('div')
-            newTagEle.classList.add("list-group-item", "list-group-item-action", "list-group-item-" + color)
+            newTagEle.classList.add('list-group-item', 'list-group-item-action', 'list-group-item-' + color)
             newTagEle.innerHTML = tag
             return newTagEle
         }
