@@ -26,7 +26,8 @@ var add = function (route) {
                 addTag: route.dom.querySelector('.add-tag')
             },
             div: {
-                tagList: route.dom.querySelector('.tag-list')
+                tagList: route.dom.querySelector('.tag-list'),
+                searchResult: route.dom.querySelector('.search-result-list')
             }
         };
         elementGroup_1.button.getOrigin.addEventListener('click', function () {
@@ -103,18 +104,38 @@ var add = function (route) {
             if (event.key == 'Enter')
                 elementGroup_1.button.addTag.click();
         });
-        elementGroup_1.button.reset.addEventListener('click', function () {
+        var reset_1 = function () {
             route.dom.querySelectorAll('input, textarea').forEach(function (ele) { return ele.value = ''; });
             elementGroup_1.div.tagList.innerHTML = '';
             elementGroup_1.div.tagList.append(emptyTag_1);
             tagList_1.splice(0, tagList_1.length);
-        });
+        };
+        elementGroup_1.button.reset.addEventListener('click', function () { return reset_1; });
         elementGroup_1.button.submit.addEventListener('click', function () {
             var url = elementGroup_1.input.url.value;
             var title = elementGroup_1.input.title.value;
             var text = elementGroup_1.textarea.text.value;
-            if (url.match(/^\s*$/) && text.match(/^\s*$/))
+            if (url.match(/^\s*$/) && text.match(/^\s*$/)) {
                 return alert('URL 和描述文本不能同时为空');
+            }
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', config_1.apiConfig.add);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            var params = new URLSearchParams();
+            params.set('url', url);
+            params.set('title', title);
+            params.set('text', text);
+            params.set('tagList', tagList_1.join('||'));
+            xhr.send(params.toString());
+            xhr.addEventListener('readystatechange', function () {
+                if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
+                    var res = JSON.parse(xhr.responseText);
+                    alert(res.msg);
+                    if (res.code == 200) {
+                        return reset_1();
+                    }
+                }
+            });
         });
     }
 };

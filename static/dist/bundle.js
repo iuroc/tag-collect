@@ -499,7 +499,13 @@ exports.apiConfig = {
     /** 新增收藏 */
     add: '/api/add',
     /** 获取标签列表 */
-    getTag: '/api/tagList'
+    getTag: '/api/tagList',
+    /** 登录接口 */
+    login: '/api/login',
+    /** 注册接口 */
+    register: '/api/register',
+    /** 发送验证码 */
+    sendCode: '/api/sendCode'
 };
 /** 网站配置 */
 exports.config = {
@@ -633,18 +639,38 @@ var add = function (route) {
             if (event.key == 'Enter')
                 elementGroup_1.button.addTag.click();
         });
-        elementGroup_1.button.reset.addEventListener('click', function () {
+        var reset_1 = function () {
             route.dom.querySelectorAll('input, textarea').forEach(function (ele) { return ele.value = ''; });
             elementGroup_1.div.tagList.innerHTML = '';
             elementGroup_1.div.tagList.append(emptyTag_1);
             tagList_1.splice(0, tagList_1.length);
-        });
+        };
+        elementGroup_1.button.reset.addEventListener('click', function () { return reset_1; });
         elementGroup_1.button.submit.addEventListener('click', function () {
             var url = elementGroup_1.input.url.value;
             var title = elementGroup_1.input.title.value;
             var text = elementGroup_1.textarea.text.value;
-            if (url.match(/^\s*$/) && text.match(/^\s*$/))
+            if (url.match(/^\s*$/) && text.match(/^\s*$/)) {
                 return alert('URL 和描述文本不能同时为空');
+            }
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', config_1.apiConfig.add);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            var params = new URLSearchParams();
+            params.set('url', url);
+            params.set('title', title);
+            params.set('text', text);
+            params.set('tagList', tagList_1.join('||'));
+            xhr.send(params.toString());
+            xhr.addEventListener('readystatechange', function () {
+                if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
+                    var res = JSON.parse(xhr.responseText);
+                    alert(res.msg);
+                    if (res.code == 200) {
+                        return reset_1();
+                    }
+                }
+            });
         });
     }
 };
@@ -685,6 +711,7 @@ exports.login = exports.checkLogin = void 0;
 var __1 = require("..");
 var md5 = require("md5");
 var util_1 = require("../util");
+var config_1 = require("../config");
 /**
  * 校验登录
  * @param event 事件对象
@@ -791,7 +818,7 @@ function clickLogin() {
     if (verCode.match(/^\s*$/))
         return alert('验证码不能为空');
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/login');
+    xhr.open('POST', config_1.apiConfig.login);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     var params = new URLSearchParams();
     params.set('username', username);
@@ -833,7 +860,7 @@ function sendVerCode(form, userOrEmail, login) {
         form.getVerCode.removeAttribute('disabled');
     }
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/api/sendCode?to=".concat(userOrEmail, "&login=").concat(login));
+    xhr.open('GET', "".concat(config_1.apiConfig.sendCode, "?to=").concat(userOrEmail, "&login=").concat(login));
     xhr.send();
     xhr.addEventListener('readystatechange', function () {
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
@@ -870,7 +897,7 @@ function clickRegister() {
     if (verCode.match(/^\s*$/))
         return alert('验证码不能为空');
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/register');
+    xhr.open('POST', config_1.apiConfig.register);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     var params = new URLSearchParams();
     params.set('username', username);
@@ -882,7 +909,7 @@ function clickRegister() {
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
             var res = JSON.parse(xhr.responseText);
             if (res.code == 200) {
-                alert('注册成功，即将自动登录');
+                alert('注册成功，点击确定将自动登录');
                 var expires = res.data.expires;
                 localStorage.setItem('expires', expires);
                 location.hash = '';
@@ -893,7 +920,7 @@ function clickRegister() {
     });
 }
 
-},{"..":7,"../util":13,"md5":5}],11:[function(require,module,exports){
+},{"..":7,"../config":6,"../util":13,"md5":5}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.user = void 0;

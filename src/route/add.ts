@@ -26,7 +26,8 @@ export const add: RouteEvent = (route) => {
                 addTag: route.dom.querySelector('.add-tag') as HTMLButtonElement
             },
             div: {
-                tagList: route.dom.querySelector('.tag-list') as HTMLDivElement
+                tagList: route.dom.querySelector('.tag-list') as HTMLDivElement,
+                searchResult: route.dom.querySelector('.search-result-list') as HTMLDivElement
             }
         }
         elementGroup.button.getOrigin.addEventListener('click', () => {
@@ -97,19 +98,39 @@ export const add: RouteEvent = (route) => {
         elementGroup.input.tag.addEventListener('keyup', (event) => {
             if (event.key == 'Enter') elementGroup.button.addTag.click()
         })
-        elementGroup.button.reset.addEventListener('click', () => {
+        const reset = () => {
             route.dom.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea').forEach(ele => ele.value = '')
             elementGroup.div.tagList.innerHTML = ''
             elementGroup.div.tagList.append(emptyTag)
             tagList.splice(0, tagList.length)
-        })
+        }
+        elementGroup.button.reset.addEventListener('click', () => reset)
         elementGroup.button.submit.addEventListener('click', () => {
             let url = elementGroup.input.url.value
             let title = elementGroup.input.title.value
             let text = elementGroup.textarea.text.value
-            if (url.match(/^\s*$/) && text.match(/^\s*$/))
+            if (url.match(/^\s*$/) && text.match(/^\s*$/)) {
                 return alert('URL 和描述文本不能同时为空')
-            
+            }
+
+            const xhr = new XMLHttpRequest()
+            xhr.open('POST', apiConfig.add)
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+            const params = new URLSearchParams()
+            params.set('url', url)
+            params.set('title', title)
+            params.set('text', text)
+            params.set('tagList', tagList.join('||'))
+            xhr.send(params.toString())
+            xhr.addEventListener('readystatechange', () => {
+                if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
+                    const res = JSON.parse(xhr.responseText) as AjaxRes
+                    alert(res.msg)
+                    if (res.code == 200) {
+                        return reset()
+                    }
+                }
+            })
         })
     }
 }

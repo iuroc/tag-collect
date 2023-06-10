@@ -5,7 +5,13 @@ export const apiConfig = {
     /** 新增收藏 */
     add: '/api/add',
     /** 获取标签列表 */
-    getTag: '/api/tagList'
+    getTag: '/api/tagList',
+    /** 登录接口 */
+    login: '/api/login',
+    /** 注册接口 */
+    register: '/api/register',
+    /** 发送验证码 */
+    sendCode: '/api/sendCode'
 }
 
 /** 网站配置 */

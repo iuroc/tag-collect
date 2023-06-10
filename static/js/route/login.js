@@ -4,6 +4,7 @@ exports.login = exports.checkLogin = void 0;
 var __1 = require("..");
 var md5 = require("md5");
 var util_1 = require("../util");
+var config_1 = require("../config");
 /**
  * 校验登录
  * @param event 事件对象
@@ -110,7 +111,7 @@ function clickLogin() {
     if (verCode.match(/^\s*$/))
         return alert('验证码不能为空');
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/login');
+    xhr.open('POST', config_1.apiConfig.login);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     var params = new URLSearchParams();
     params.set('username', username);
@@ -152,7 +153,7 @@ function sendVerCode(form, userOrEmail, login) {
         form.getVerCode.removeAttribute('disabled');
     }
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/api/sendCode?to=".concat(userOrEmail, "&login=").concat(login));
+    xhr.open('GET', "".concat(config_1.apiConfig.sendCode, "?to=").concat(userOrEmail, "&login=").concat(login));
     xhr.send();
     xhr.addEventListener('readystatechange', function () {
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
@@ -189,7 +190,7 @@ function clickRegister() {
     if (verCode.match(/^\s*$/))
         return alert('验证码不能为空');
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/register');
+    xhr.open('POST', config_1.apiConfig.register);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     var params = new URLSearchParams();
     params.set('username', username);
@@ -201,7 +202,7 @@ function clickRegister() {
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
             var res = JSON.parse(xhr.responseText);
             if (res.code == 200) {
-                alert('注册成功，即将自动登录');
+                alert('注册成功，点击确定将自动登录');
                 var expires = res.data.expires;
                 localStorage.setItem('expires', expires);
                 location.hash = '';

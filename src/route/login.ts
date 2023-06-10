@@ -3,6 +3,7 @@ import { router } from '..'
 import * as md5 from 'md5'
 import { checkEmail } from '../util'
 import { AjaxRes } from '../types'
+import { apiConfig } from '../config'
 /**
  * 校验登录
  * @param event 事件对象
@@ -104,7 +105,7 @@ function clickLogin() {
     if (password.length == 0) return alert('密码不能为空')
     if (verCode.match(/^\s*$/)) return alert('验证码不能为空')
     const xhr = new XMLHttpRequest()
-    xhr.open('POST', '/api/login')
+    xhr.open('POST', apiConfig.login)
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
     const params = new URLSearchParams()
     params.set('username', username)
@@ -153,7 +154,7 @@ function sendVerCode(
     }
 
     const xhr = new XMLHttpRequest()
-    xhr.open('GET', `/api/sendCode?to=${userOrEmail}&login=${login}`)
+    xhr.open('GET', `${apiConfig.sendCode}?to=${userOrEmail}&login=${login}`)
     xhr.send()
     xhr.addEventListener('readystatechange', () => {
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
@@ -186,7 +187,7 @@ function clickRegister() {
     if (!checkEmail(email)) return alert('输入的邮箱格式错误，请检查后重新输入')
     if (verCode.match(/^\s*$/)) return alert('验证码不能为空')
     const xhr = new XMLHttpRequest()
-    xhr.open('POST', '/api/register')
+    xhr.open('POST', apiConfig.register)
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
     const params = new URLSearchParams()
     params.set('username', username)
@@ -198,7 +199,7 @@ function clickRegister() {
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
             const res = JSON.parse(xhr.responseText) as AjaxRes
             if (res.code == 200) {
-                alert('注册成功，即将自动登录')
+                alert('注册成功，点击确定将自动登录')
                 let expires = res.data.expires as string
                 localStorage.setItem('expires', expires)
                 location.hash = ''
