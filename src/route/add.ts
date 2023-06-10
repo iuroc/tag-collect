@@ -7,6 +7,8 @@ import { AjaxRes } from '../types'
 export const add: RouteEvent = (route) => {
     if (route.status == 0) {
         route.status = 1
+        /** 标签列表 */
+        const tagList: string[] = []
         const elementGroup = {
             input: {
                 url: route.dom.querySelector('.input-url') as HTMLInputElement,
@@ -35,41 +37,79 @@ export const add: RouteEvent = (route) => {
             } catch { }
         })
         elementGroup.button.getTitle.addEventListener('click', () => {
-            getTitle(elementGroup)
+            let url = elementGroup.input.url.value
+            if (!checkUrl(url)) return alert('输入的 URL 不合法')
+            elementGroup.button.getTitle.setAttribute('disabled', 'disabled')
+            elementGroup.button.getTitle.innerHTML = '正在抓取'
+            const xhr = new XMLHttpRequest()
+            xhr.open('GET', apiConfig.getTitle + encodeURIComponent(url))
+            xhr.timeout = 5000
+            xhr.send()
+            const endStatus = () => {
+                elementGroup.button.getTitle.removeAttribute('disabled')
+                elementGroup.button.getTitle.innerHTML = '自动抓取'
+            }
+            xhr.addEventListener('readystatechange', () => {
+                if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
+                    const res = JSON.parse(xhr.responseText) as AjaxRes
+                    endStatus()
+                    if (res.code == 200) {
+                        elementGroup.input.title.value = res.data
+                        return
+                    }
+                    alert(res.msg)
+                }
+            })
+            xhr.onerror = xhr.ontimeout = endStatus
         })
+
+        elementGroup.input.url.addEventListener('keyup', (event) => {
+            if (event.key == 'Enter') elementGroup.button.getOrigin.click()
+        })
+
+        elementGroup.input.title.addEventListener('keyup', (event) => {
+            if (event.key == 'Enter') elementGroup.button.getTitle.click()
+        })
+        /** 标签列表为空时的提示元素 */
+        const emptyTag = document.createElement('button')
+        emptyTag.setAttribute('class', 'btn w-100 border border-2')
+        emptyTag.innerText = '当前标签列表为空'
+        elementGroup.div.tagList.append(emptyTag)
         elementGroup.button.addTag.addEventListener('click', () => {
+            elementGroup.input.tag.focus()
+            let tag = elementGroup.input.tag.value
+            if (tag.match(/^\s*$/)) return
+            if (tagList.includes(tag)) return
+            elementGroup.input.tag.value = ''
+            const newTagEle = document.createElement('div')
+            newTagEle.classList.add("list-group-item", "list-group-item-action", "list-group-item-success")
+            newTagEle.innerHTML = tag
+            tagList.push(tag)
+            elementGroup.div.tagList.append(newTagEle)
+            emptyTag.remove()
+            newTagEle.addEventListener('click', () => {
+                newTagEle.remove()
+                let index = tagList.indexOf(tag)
+                tagList.splice(index, 1)
+                if (tagList.length == 0) elementGroup.div.tagList.append(emptyTag)
+            })
+        })
+        elementGroup.input.tag.addEventListener('keyup', (event) => {
+            if (event.key == 'Enter') elementGroup.button.addTag.click()
+        })
+        elementGroup.button.reset.addEventListener('click', () => {
+            route.dom.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea').forEach(ele => ele.value = '')
+            elementGroup.div.tagList.innerHTML = ''
+            elementGroup.div.tagList.append(emptyTag)
+            tagList.splice(0, tagList.length)
+        })
+        elementGroup.button.submit.addEventListener('click', () => {
+            let url = elementGroup.input.url.value
+            let title = elementGroup.input.title.value
+            let text = elementGroup.textarea.text.value
+            if (url.match(/^\s*$/) && text.match(/^\s*$/))
+                return alert('URL 和描述文本不能同时为空')
             
         })
     }
-}
-
-
-function getTitle(eleGroup: {
-    button: Record<string, HTMLButtonElement>,
-    input: Record<string, HTMLInputElement>,
-}) {
-    let url = eleGroup.input.url.value
-    if (!checkUrl(url)) return alert('输入的 URL 不合法')
-    eleGroup.button.getTitle.setAttribute('disabled', 'disabled')
-    eleGroup.button.getTitle.innerHTML = '正在抓取'
-    const xhr = new XMLHttpRequest()
-    xhr.open('GET', apiConfig.getTitle + encodeURIComponent(url))
-    xhr.timeout = 5000
-    xhr.send()
-    const endStatus = () => {
-        eleGroup.button.getTitle.removeAttribute('disabled')
-        eleGroup.button.getTitle.innerHTML = '自动抓取'
-    }
-    xhr.addEventListener('readystatechange', () => {
-        if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
-            const res = JSON.parse(xhr.responseText) as AjaxRes
-            endStatus()
-            if (res.code == 200) {
-                eleGroup.input.title.value = res.data
-                return
-            }
-            alert(res.msg)
-        }
-    })
-    xhr.onerror = xhr.ontimeout = endStatus
 }
