@@ -1,8 +1,6 @@
 package util
 
 import (
-	"crypto/rand"
-	"encoding/base64"
 	"encoding/json"
 )
 
@@ -38,22 +36,20 @@ func MakeRes(code int, msg string, data interface{}) (string, error) {
 	return jsonStr, nil
 }
 
+// 生成成功响应
 func MakeSuc(msg string, data interface{}) []byte {
 	str, _ := MakeRes(200, msg, data)
 	return []byte(str)
 }
 
+// 生成异常响应，0 状态码
 func MakeErr(msg string) []byte {
-	str, _ := MakeRes(0, msg, nil)
+	return MakeErrAndCode(msg, 0)
+}
+
+// 生成异常响应，自定义状态码
+func MakeErrAndCode(msg string, code int) []byte {
+	str, _ := MakeRes(code, msg, nil)
 	return []byte(str)
 }
 
-func MakeToken(tokenLength int) (string, error) {
-	randomBytes := make([]byte, tokenLength)
-	_, err := rand.Read(randomBytes)
-	if err != nil {
-		return "", err
-	}
-	token := base64.URLEncoding.EncodeToString(randomBytes)
-	return token, nil
-}

@@ -22,6 +22,45 @@
         </div>
         <div data-route="add">
             <back-nav>新增收藏</back-nav>
+            <div class="row">
+                <div class="col-md-6 col-lg-7 col-xl-8 col-xxl-9">
+                    <div class="row">
+                        <div class="col-xl-6 mb-4">
+                            <div class="input-group shadow-sm rounded">
+                                <input type="url" class="form-control border border-2 input-url" placeholder="请输入网址">
+                                <button class="btn btn-secondary get-origin">取根地址</button>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 mb-4">
+                            <div class="input-group shadow-sm rounded">
+                                <input type="text" class="form-control border border-2 input-title" placeholder="请输入标题">
+                                <button class="btn btn-secondary get-title">自动抓取</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="shadow-sm rounded mb-4">
+                        <textarea class="form-control input-text border border-2" rows="8"
+                            placeholder="请输入描述文本"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-5 col-xl-4 col-xxl-3">
+                    <div class="input-group mb-4 shadow-sm rounded">
+                        <input type="text" class="form-control border border-2 input-tag" placeholder="请输入标签">
+                        <button class="btn btn-success shadow-sm add-tag">添加</button>
+                    </div>
+                    <div class="tag-list mb-1"></div>
+                    <div class="row mb-4">
+                        <div class="col">
+                            <button class="btn btn-outline-danger shadow-sm w-100 select-tag">选择标签</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-success shadow-sm w-100 generate-tag">生成标签</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary shadow-sm me-3 submit">提交收藏</button>
+            <button class="btn btn-danger shadow-sm reset">重置表单</button>
         </div>
         <div data-route="list">
             <back-nav>收藏列表</back-nav>

@@ -7,6 +7,11 @@ import (
 	"tag-collect/serve/route"
 )
 
+type Person struct {
+	Name string
+	Age  int
+}
+
 func main() {
 	Main()
 }
@@ -23,5 +28,5 @@ func Main() {
 	http.HandleFunc("/api/login", route.Login)
 	http.HandleFunc("/logout", route.Logout)
 	fmt.Println("http://localhost:8080")
-	http.ListenAndServe("localhost:8080", nil)
+	http.ListenAndServe(":8080", nil)
 }

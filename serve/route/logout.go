@@ -1,9 +1,9 @@
 package route
 
 import (
-	"log"
 	"net/http"
 	"tag-collect/serve/db"
+	"tag-collect/serve/util"
 	"time"
 )
 
@@ -17,8 +17,10 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 			token = cookie.Value
 		}
 	}
-	if err := db.RemoveToken(conn, token); err != nil {
-		log.Fatal(err)
+	// 退出登录，则移除当前 Cookie-Token，不影响其他设备登录状态
+	if err := RemoveToken(conn, token); err != nil {
+		w.Write(util.MakeErr("Token 异常"))
+		return
 	}
 	cookie := &http.Cookie{
 		Name:     "token",
