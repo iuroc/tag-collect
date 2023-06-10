@@ -14,7 +14,9 @@ exports.apiConfig = {
     /** 注册接口 */
     register: '/api/register',
     /** 发送验证码 */
-    sendCode: '/api/sendCode'
+    sendCode: '/api/sendCode',
+    /** 加载标签列表，可搜索 */
+    tagList: '/api/tagList'
 };
 /** 网站配置 */
 exports.config = {
