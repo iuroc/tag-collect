@@ -76,6 +76,7 @@ const registerForm = {
     register: registerBox.querySelector('.click-register') as HTMLButtonElement,
 }
 export const login: RouteEvent = (route) => {
+
     if (route.args[0] == 'register') {
         loginBox.style.display = 'none'
         registerBox.style.display = 'block'

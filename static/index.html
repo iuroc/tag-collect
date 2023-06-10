@@ -42,13 +42,23 @@
                         <textarea class="form-control input-text border border-2" rows="8"
                             placeholder="请输入描述文本"></textarea>
                     </div>
+                    <div class="mb-4">
+                        <button class="btn btn-primary shadow-sm me-3 submit">提交收藏</button>
+                        <button class="btn btn-danger shadow-sm reset">重置表单</button>
+                    </div>
+
                 </div>
                 <div class="col-md-6 col-lg-5 col-xl-4 col-xxl-3">
                     <div class="input-group mb-4 shadow-sm rounded">
                         <input type="text" class="form-control border border-2 input-tag" placeholder="请输入标签">
                         <button class="btn btn-success shadow-sm add-tag">添加</button>
                     </div>
-                    <div class="tag-list mb-1"></div>
+                    <div class="tag-list mb-4 list-group shadow-sm">
+                        <div class="list-group-item list-group-item-action border-success">百度</div>
+                        <div class="list-group-item list-group-item-action border-success">百度</div>
+                        <div class="list-group-item list-group-item-action border-success">百度</div>
+                        <div class="list-group-item list-group-item-action border-success">百度</div>
+                    </div>
                     <div class="row mb-4">
                         <div class="col">
                             <button class="btn btn-outline-danger shadow-sm w-100 select-tag">选择标签</button>
@@ -59,8 +69,7 @@
                     </div>
                 </div>
             </div>
-            <button class="btn btn-primary shadow-sm me-3 submit">提交收藏</button>
-            <button class="btn btn-danger shadow-sm reset">重置表单</button>
+
         </div>
         <div data-route="list">
             <back-nav>收藏列表</back-nav>
@@ -75,49 +84,49 @@
         <div data-route="login" class="mx-auto sm-width">
             <div class="login-box" style="display: none;">
                 <div class="fs-3 text-center fw-bold mb-4">用户登录</div>
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control input-username" placeholder="username">
+                <div class="form-floating shadow-sm rounded mb-3">
+                    <input type="text" class="form-control input-username border border-2" placeholder="username">
                     <label>请输入用户名或邮箱</label>
                 </div>
-                <div class="form-floating mb-3">
-                    <input type="password" autocomplete="new-password" class="form-control input-password"
-                        placeholder="username">
+                <div class="form-floating shadow-sm rounded mb-3">
+                    <input type="password" autocomplete="new-password"
+                        class="form-control input-password border border-2" placeholder="username">
                     <label>请输入密码</label>
                 </div>
-                <div class="input-group mb-4">
-                    <input type="text" class="form-control input-vercode" placeholder="请输入验证码">
+                <div class="input-group shadow-sm rounded mb-4">
+                    <input type="text" class="form-control input-vercode border border-2" placeholder="请输入验证码">
                     <button class="btn btn-success get-vercode">获取验证码</button>
                 </div>
-                <button class="btn btn-primary me-3 px-5 click-login">登录</button>
-                <a class="btn btn-light border" href="#/login/register">注册</a>
+                <button class="btn btn-primary me-3 px-5 click-login shadow-sm">登录</button>
+                <a class="btn btn-light border shadow-sm" href="#/login/register">注册</a>
             </div>
             <div class="register-box" style="display: none;">
                 <div class="fs-3 text-center fw-bold mb-4">用户注册</div>
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control input-username" placeholder="username">
+                <div class="form-floating shadow-sm rounded mb-3">
+                    <input type="text" class="form-control input-username border border-2" placeholder="username">
                     <label>请输入用户名</label>
                 </div>
-                <div class="form-floating mb-3">
-                    <input type="password" autocomplete="new-password" class="form-control input-password"
-                        placeholder="username">
+                <div class="form-floating shadow-sm rounded mb-3">
+                    <input type="password" autocomplete="new-password"
+                        class="form-control input-password border border-2" placeholder="username">
                     <label>请输入密码</label>
                 </div>
-                <div class="form-floating mb-3">
-                    <input type="password" autocomplete="new-password" class="form-control input-repeat-password"
-                        placeholder="username">
+                <div class="form-floating shadow-sm rounded mb-3">
+                    <input type="password" autocomplete="new-password"
+                        class="form-control input-repeat-password border border-2" placeholder="username">
                     <label>请重复输入密码</label>
                 </div>
-                <div class="form-floating mb-3">
-                    <input type="email" autocomplete="new-password" class="form-control input-email"
+                <div class="form-floating shadow-sm rounded mb-3">
+                    <input type="email" autocomplete="new-password" class="form-control input-email border border-2"
                         placeholder="email">
                     <label>请输入邮箱地址</label>
                 </div>
-                <div class="input-group mb-4">
-                    <input type="text" class="form-control input-vercode" placeholder="请输入验证码">
+                <div class="input-group rounded shadow-sm mb-4">
+                    <input type="text" class="form-control input-vercode border border-2" placeholder="请输入验证码">
                     <button class="btn btn-success get-vercode">获取验证码</button>
                 </div>
-                <button class="btn btn-primary me-3 px-5 click-register">注册</button>
-                <a class="btn btn-light border" href="#/login">登录</a>
+                <button class="btn btn-primary me-3 px-5 click-register shadow-sm">注册</button>
+                <a class="btn btn-light border shadow-sm" href="#/login">登录</a>
             </div>
         </div>
 

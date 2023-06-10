@@ -491,22 +491,115 @@ function isSlowBuffer (obj) {
 },{"charenc":2,"crypt":3,"is-buffer":4}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.config = exports.apiConfig = void 0;
+/** API 接口配置 */
+exports.apiConfig = {
+    /** 网页标题获取，`=` 结尾，内置接口为 `/api/getTitle` */
+    getTitle: 'https://get-html.9494666.xyz/?type=title&url=',
+    /** 新增收藏 */
+    add: '/api/add',
+    /** 获取标签列表 */
+    getTag: '/api/tagList'
+};
+/** 网站配置 */
+exports.config = {
+    /** API 接口配置 */
+    api: exports.apiConfig
+};
+
+},{}],7:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
 var apee_router_1 = require("apee-router");
 var home_1 = require("./route/home");
 var login_1 = require("./route/login");
 var user_1 = require("./route/user");
+var add_1 = require("./route/add");
 var template_1 = require("./template");
 exports.router = new apee_router_1.Router();
 exports.router.set(['home', 'add', 'list', 'tag', 'user', 'login']);
 exports.router.set('home', home_1.home);
 exports.router.set('login', login_1.login);
 exports.router.set('user', user_1.user);
+exports.router.set('add', add_1.add);
 exports.router.start();
 (0, login_1.checkLogin)();
 (0, template_1.loadTemplate)(exports.router);
 
-},{"./route/home":7,"./route/login":8,"./route/user":9,"./template":10,"apee-router":1}],7:[function(require,module,exports){
+},{"./route/add":8,"./route/home":9,"./route/login":10,"./route/user":11,"./template":12,"apee-router":1}],8:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.add = void 0;
+var util_1 = require("../util");
+var config_1 = require("../config");
+/** `hash = #/add` */
+var add = function (route) {
+    if (route.status == 0) {
+        route.status = 1;
+        var elementGroup_1 = {
+            input: {
+                url: route.dom.querySelector('.input-url'),
+                title: route.dom.querySelector('.input-title'),
+                tag: route.dom.querySelector('.input-tag'),
+            },
+            textarea: {
+                text: route.dom.querySelector('.input-text'),
+            },
+            button: {
+                getOrigin: route.dom.querySelector('.get-origin'),
+                getTitle: route.dom.querySelector('.get-title'),
+                submit: route.dom.querySelector('.submit'),
+                reset: route.dom.querySelector('.reset'),
+                addTag: route.dom.querySelector('.add-tag')
+            },
+            div: {
+                tagList: route.dom.querySelector('.tag-list')
+            }
+        };
+        elementGroup_1.button.getOrigin.addEventListener('click', function () {
+            var ele = elementGroup_1.input.url;
+            ele.focus();
+            try {
+                ele.value = new URL(ele.value).origin;
+            }
+            catch (_a) { }
+        });
+        elementGroup_1.button.getTitle.addEventListener('click', function () {
+            getTitle(elementGroup_1);
+        });
+    }
+};
+exports.add = add;
+function getTitle(eleGroup) {
+    var url = eleGroup.input.url.value;
+    if (!(0, util_1.checkUrl)(url))
+        return alert('输入的 URL 不合法');
+    eleGroup.button.getTitle.setAttribute('disabled', 'disabled');
+    eleGroup.button.getTitle.innerHTML = '正在抓取';
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', config_1.apiConfig.getTitle + encodeURIComponent(url));
+    xhr.timeout = 5000;
+    xhr.send();
+    var endStatus = function () {
+        eleGroup.button.getTitle.removeAttribute('disabled');
+        eleGroup.button.getTitle.innerHTML = '自动抓取';
+    };
+    xhr.addEventListener('readystatechange', function () {
+        if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
+            var res = JSON.parse(xhr.responseText);
+            endStatus();
+            if (res.code == 200) {
+                eleGroup.input.title.value = res.data;
+                return;
+            }
+            alert(res.msg);
+        }
+    });
+    xhr.onerror = xhr.ontimeout = endStatus;
+}
+
+},{"../config":6,"../util":13}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.home = void 0;
@@ -534,7 +627,7 @@ var home = function (route) {
 };
 exports.home = home;
 
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.login = exports.checkLogin = void 0;
@@ -759,7 +852,7 @@ function clickRegister() {
     });
 }
 
-},{"..":6,"../util":11,"md5":5}],9:[function(require,module,exports){
+},{"..":7,"../util":13,"md5":5}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.user = void 0;
@@ -775,7 +868,7 @@ var user = function (route) {
 };
 exports.user = user;
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loadTemplate = void 0;
@@ -818,14 +911,25 @@ function loadSubTitle() {
     });
 }
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkEmail = void 0;
+exports.checkUrl = exports.checkEmail = void 0;
 /** 校验邮箱 */
 function checkEmail(email) {
     return email.match(/^[\w.%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
 }
 exports.checkEmail = checkEmail;
+/** 校验 URL */
+function checkUrl(url) {
+    try {
+        new URL(url);
+        return true;
+    }
+    catch (_a) {
+        return false;
+    }
+}
+exports.checkUrl = checkUrl;
 
-},{}]},{},[6]);
+},{}]},{},[7]);
