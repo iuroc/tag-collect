@@ -524,7 +524,7 @@ exports.router.set('login', login_1.login);
 exports.router.set('user', user_1.user);
 exports.router.set('add', add_1.add);
 exports.router.start();
-(0, login_1.checkLogin)();
+// checkLogin()
 (0, template_1.loadTemplate)(exports.router);
 
 },{"./route/add":8,"./route/home":9,"./route/login":10,"./route/user":11,"./template":12,"apee-router":1}],8:[function(require,module,exports){
@@ -632,6 +632,19 @@ var add = function (route) {
         elementGroup_1.input.tag.addEventListener('keyup', function (event) {
             if (event.key == 'Enter')
                 elementGroup_1.button.addTag.click();
+        });
+        elementGroup_1.button.reset.addEventListener('click', function () {
+            route.dom.querySelectorAll('input, textarea').forEach(function (ele) { return ele.value = ''; });
+            elementGroup_1.div.tagList.innerHTML = '';
+            elementGroup_1.div.tagList.append(emptyTag_1);
+            tagList_1.splice(0, tagList_1.length);
+        });
+        elementGroup_1.button.submit.addEventListener('click', function () {
+            var url = elementGroup_1.input.url.value;
+            var title = elementGroup_1.input.title.value;
+            var text = elementGroup_1.textarea.text.value;
+            if (url.match(/^\s*$/) && text.match(/^\s*$/))
+                return alert('URL 和描述文本不能同时为空');
         });
     }
 };

@@ -26,6 +26,7 @@ func Main() {
 	http.HandleFunc("/api/sendCode", route.SendCode)
 	http.HandleFunc("/api/register", route.Register)
 	http.HandleFunc("/api/login", route.Login)
+	http.HandleFunc("/api/add", route.Add)
 	http.HandleFunc("/logout", route.Logout)
 	fmt.Println("http://localhost:8080")
 	http.ListenAndServe(":8080", nil)

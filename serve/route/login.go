@@ -71,16 +71,6 @@ func CheckLogin(conn *sql.DB, usernameOrEmail string, passwordMd5 string) bool {
 	return count > 0
 }
 
-// 校验 Token, 返回用户名
-func CheckToken(conn *sql.DB, token string) (string, error) {
-	var username string
-	err := conn.QueryRow("SELECT username FROM tag_collect_token WHERE token = ? AND create_time >= (CURRENT_TIMESTAMP - INTERVAL 1 MONTH)", token).Scan(&username)
-	if err != nil {
-		return "", err
-	}
-	return username, nil
-}
-
 // 移除过期 Token 记录
 func RemoveExpiresToken(conn *sql.DB) error {
 	_, err := conn.Exec("DELETE FROM tag_collect_token WHERE create_time < (CURRENT_TIMESTAMP - INTERVAL 1 MONTH)")
@@ -103,4 +93,21 @@ func GetUserInfo(conn *sql.DB, usernameOrEmail string) (string, string, error) {
 	err := conn.QueryRow("SELECT username, email FROM tag_collect_user WHERE username = ? OR email = ?",
 		usernameOrEmail, usernameOrEmail).Scan(&username, &email)
 	return username, email, err
+}
+
+// 校验 Token, 返回用户名
+func CheckToken(conn *sql.DB, token string) (string, error) {
+	var username string
+	err := conn.QueryRow("SELECT username FROM tag_collect_token WHERE token = ? AND create_time >= (CURRENT_TIMESTAMP - INTERVAL 1 MONTH)", token).Scan(&username)
+	if err != nil {
+		return "", err
+	}
+	return username, nil
+}
+
+// 根据 Cookie 校验 Token，返回用户名
+func CheckTokenByCookie(conn *sql.DB, cookies []*http.Cookie) bool {
+	token := util.GetCookieValue(cookies, "token")
+	_, err := CheckToken(conn, token)
+	return err == nil
 }
