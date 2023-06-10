@@ -582,7 +582,8 @@ function checkLogin(event) {
 exports.checkLogin = checkLogin;
 /** 登录面板 */
 var loginBox = document.querySelector('.login-box');
-var loginSubEles = {
+/** 登录面板表单 */
+var loginForm = {
     /** 用户名或邮箱输入 */
     username: loginBox.querySelector('.input-username'),
     /** 密码输入 */
@@ -596,7 +597,8 @@ var loginSubEles = {
 };
 /** 注册面板 */
 var registerBox = document.querySelector('.register-box');
-var registerSubEles = {
+/** 注册面板表单 */
+var registerForm = {
     /** 用户名输入 */
     username: registerBox.querySelector('.input-username'),
     /** 密码输入 */
@@ -623,32 +625,35 @@ var login = function (route) {
     }
     if (route.status == 0) {
         route.status = 1;
-        registerSubEles.register.addEventListener('click', clickRegister);
-        registerSubEles.getVerCode.addEventListener('click', function () {
-            var email = registerSubEles.email.value;
+        // 单击注册事件
+        registerForm.register.addEventListener('click', clickRegister);
+        // 单击获取验证码事件
+        registerForm.getVerCode.addEventListener('click', function () {
+            var email = registerForm.email.value;
             if (!(0, util_1.checkEmail)(email))
-                return alert('输入的邮箱格式错误，请检查后重新输入');
-            clickGetVerCode(registerSubEles, email);
+                return alert('请输入正确的邮箱');
+            sendVerCode(registerForm, email);
         });
-        loginSubEles.login.addEventListener('click', clickLogin);
-        loginSubEles.getVerCode.addEventListener('click', function () {
-            var username = loginSubEles.username.value;
-            if (!username.match(/^\w{4,20}$/) && !(0, util_1.checkEmail)(username))
-                return alert('用户名或邮箱格式错误');
-            clickGetVerCode(loginSubEles, username, true);
+        loginForm.login.addEventListener('click', clickLogin);
+        loginForm.getVerCode.addEventListener('click', function () {
+            var username = loginForm.username.value;
+            if (username.match(/^\s*$/))
+                return alert('用户名或邮箱不能为空');
+            sendVerCode(loginForm, username, true);
         });
     }
 };
 exports.login = login;
-/** 点击登录 */
+/** 点击登录事件 */
 function clickLogin() {
-    var username = loginSubEles.username.value;
-    var password = loginSubEles.password.value;
-    var verCode = loginSubEles.verCode.value;
-    if (!username.match(/^\w{4,20}$/) && !(0, util_1.checkEmail)(username))
-        return alert('用户名或邮箱格式错误');
-    if (!password.match(/^\S{6,20}$/))
-        return alert('密码必须是 6-20 位字符串');
+    var username = loginForm.username.value;
+    var password = loginForm.password.value;
+    var verCode = loginForm.verCode.value;
+    if (username.match(/^\s*$/))
+        return alert('用户名或邮箱不能为空');
+    console.log(password.match(/^\s*$/));
+    if (password.length == 0)
+        return alert('密码不能为空');
     if (verCode.match(/^\s*$/))
         return alert('验证码不能为空');
     var xhr = new XMLHttpRequest();
@@ -673,18 +678,25 @@ function clickLogin() {
         }
     });
 }
-function clickGetVerCode(eles, userOrEmail, login) {
+/**
+ * 点击发送验证码
+ * @param form 表单元素集合
+ * @param userOrEmail 用户名或邮箱
+ * @param login 是否是登录模式
+ */
+function sendVerCode(form, userOrEmail, login) {
     if (login === void 0) { login = false; }
-    eles.getVerCode.setAttribute('disabled', 'disabled');
-    eles.getVerCode.innerHTML = '正在发送';
-    /** 修改加载中状态 */
+    form.getVerCode.setAttribute('disabled', 'disabled');
+    form.getVerCode.innerHTML = '正在发送';
+    /** 修改倒计时 */
     function loading(num) {
-        eles.getVerCode.innerHTML = "".concat(num, " \u79D2");
+        form.getVerCode.innerHTML = "".concat(num, " \u79D2");
     }
+    /** 结束倒计时 */
     function end(timer) {
         clearInterval(timer);
-        eles.getVerCode.innerHTML = '获取验证码';
-        eles.getVerCode.removeAttribute('disabled');
+        form.getVerCode.innerHTML = '获取验证码';
+        form.getVerCode.removeAttribute('disabled');
     }
     var xhr = new XMLHttpRequest();
     xhr.open('GET', "/api/sendCode?to=".concat(userOrEmail, "&login=").concat(login));
@@ -706,12 +718,13 @@ function clickGetVerCode(eles, userOrEmail, login) {
         }
     });
 }
+/** 单击注册事件 */
 function clickRegister() {
-    var username = registerSubEles.username.value;
-    var password = registerSubEles.password.value;
-    var repeatPassword = registerSubEles.repeatPassword.value;
-    var verCode = registerSubEles.verCode.value;
-    var email = registerSubEles.email.value;
+    var username = registerForm.username.value;
+    var password = registerForm.password.value;
+    var repeatPassword = registerForm.repeatPassword.value;
+    var verCode = registerForm.verCode.value;
+    var email = registerForm.email.value;
     if (!username.match(/^\w{4,20}$/))
         return alert('用户名必须是 4-20 位的数字、字母、下划线任意组合');
     if (!password.match(/^\S{6,20}$/))

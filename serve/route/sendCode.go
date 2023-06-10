@@ -1,10 +1,10 @@
 package route
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"math/rand"
-	"database/sql"
 	"net/http"
 	"time"
 
@@ -27,7 +27,7 @@ func SendCode(w http.ResponseWriter, r *http.Request) {
 		w.Write(util.MakeErr("请输入收件人地址，示例：?to=user@example.com"))
 		return
 	}
-	email, err := GetUserEmail(conn, to)
+	_, email, err := GetUserInfo(conn, to)
 	// 用户不存在
 	if err != nil {
 		if login == "true" {
@@ -70,10 +70,9 @@ func MakeVerCode() string {
 	return fmt.Sprint(rand.Intn(9000) + 1000)
 }
 
-
-
 // 插入验证码记录，并删除该邮箱之前的验证码，以及删除其他过期验证码
 func InsertVerCode(conn *sql.DB, email string, verCode string) error {
+	// 移除某条验证码记录，并移除过期验证码
 	RemoveVerCode(conn, email)
 	stmp, _ := conn.Prepare("INSERT INTO tag_collect_ver_code (email, ver_code) VALUES (?, ?)")
 	if _, err := stmp.Exec(email, verCode); err != nil {
@@ -84,7 +83,7 @@ func InsertVerCode(conn *sql.DB, email string, verCode string) error {
 
 // 移除某条验证码记录，并移除过期验证码
 func RemoveVerCode(conn *sql.DB, email string) error {
-	_, err := conn.Exec("DELETE FROM tag_collect_ver_code WHERE email = ? OR create_time < (CURRENT_TIMESTAMP - INTERVAL 5 MINUTE)")
+	_, err := conn.Exec("DELETE FROM tag_collect_ver_code WHERE email = ? OR create_time < (CURRENT_TIMESTAMP - INTERVAL 5 MINUTE)", email)
 	return err
 }
 

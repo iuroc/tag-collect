@@ -43,7 +43,8 @@ export function checkLogin(event?: HashChangeEvent) {
 }
 /** 登录面板 */
 const loginBox = document.querySelector('.login-box') as HTMLDivElement
-const loginSubEles = {
+/** 登录面板表单 */
+const loginForm = {
     /** 用户名或邮箱输入 */
     username: loginBox.querySelector('.input-username') as HTMLInputElement,
     /** 密码输入 */
@@ -57,7 +58,8 @@ const loginSubEles = {
 }
 /** 注册面板 */
 const registerBox = document.querySelector('.register-box') as HTMLDivElement
-const registerSubEles = {
+/** 注册面板表单 */
+const registerForm = {
     /** 用户名输入 */
     username: registerBox.querySelector('.input-username') as HTMLInputElement,
     /** 密码输入 */
@@ -83,30 +85,32 @@ export const login: RouteEvent = (route) => {
     }
     if (route.status == 0) {
         route.status = 1
-        registerSubEles.register.addEventListener('click', clickRegister)
-        registerSubEles.getVerCode.addEventListener('click', () => {
-            let email = registerSubEles.email.value
-            if (!checkEmail(email)) return alert('输入的邮箱格式错误，请检查后重新输入')
-            clickGetVerCode(registerSubEles, email)
+        // 单击注册事件
+        registerForm.register.addEventListener('click', clickRegister)
+        // 单击获取验证码事件
+        registerForm.getVerCode.addEventListener('click', () => {
+            let email = registerForm.email.value
+            if (!checkEmail(email)) return alert('请输入正确的邮箱')
+            sendVerCode(registerForm, email)
         })
-        loginSubEles.login.addEventListener('click', clickLogin)
-        loginSubEles.getVerCode.addEventListener('click', () => {
-            let username = loginSubEles.username.value
-            if (!username.match(/^\w{4,20}$/) && !checkEmail(username))
-                return alert('用户名或邮箱格式错误')
-            clickGetVerCode(loginSubEles, username, true)
+        loginForm.login.addEventListener('click', clickLogin)
+        loginForm.getVerCode.addEventListener('click', () => {
+            let username = loginForm.username.value
+            if (username.match(/^\s*$/))
+                return alert('用户名或邮箱不能为空')
+            sendVerCode(loginForm, username, true)
         })
     }
 }
 
-/** 点击登录 */
+/** 点击登录事件 */
 function clickLogin() {
-    let username = loginSubEles.username.value
-    let password = loginSubEles.password.value
-    let verCode = loginSubEles.verCode.value
-    if (!username.match(/^\w{4,20}$/) && !checkEmail(username))
-        return alert('用户名或邮箱格式错误')
-    if (!password.match(/^\S{6,20}$/)) return alert('密码必须是 6-20 位字符串')
+    let username = loginForm.username.value
+    let password = loginForm.password.value
+    let verCode = loginForm.verCode.value
+    if (username.match(/^\s*$/)) return alert('用户名或邮箱不能为空')
+    console.log(password.match(/^\s*$/))
+    if (password.length == 0) return alert('密码不能为空')
     if (verCode.match(/^\s*$/)) return alert('验证码不能为空')
     const xhr = new XMLHttpRequest()
     xhr.open('POST', '/api/login')
@@ -131,21 +135,30 @@ function clickLogin() {
     })
 }
 
-function clickGetVerCode(eles: { [key: string]: HTMLDivElement | HTMLButtonElement },
-    userOrEmail: string, login: boolean = false) {
-
-    eles.getVerCode.setAttribute('disabled', 'disabled')
-    eles.getVerCode.innerHTML = '正在发送'
-
-    /** 修改加载中状态 */
+/**
+ * 点击发送验证码
+ * @param form 表单元素集合
+ * @param userOrEmail 用户名或邮箱
+ * @param login 是否是登录模式
+ */
+function sendVerCode(
+    form: {
+        [key: string]: HTMLDivElement | HTMLButtonElement
+    },
+    userOrEmail: string,
+    login: boolean = false
+) {
+    form.getVerCode.setAttribute('disabled', 'disabled')
+    form.getVerCode.innerHTML = '正在发送'
+    /** 修改倒计时 */
     function loading(num: number) {
-        eles.getVerCode.innerHTML = `${num} 秒`
+        form.getVerCode.innerHTML = `${num} 秒`
     }
-
+    /** 结束倒计时 */
     function end(timer?: NodeJS.Timer) {
         clearInterval(timer)
-        eles.getVerCode.innerHTML = '获取验证码'
-        eles.getVerCode.removeAttribute('disabled')
+        form.getVerCode.innerHTML = '获取验证码'
+        form.getVerCode.removeAttribute('disabled')
     }
 
     const xhr = new XMLHttpRequest()
@@ -168,12 +181,14 @@ function clickGetVerCode(eles: { [key: string]: HTMLDivElement | HTMLButtonEleme
     })
 }
 
+
+/** 单击注册事件 */
 function clickRegister() {
-    let username = registerSubEles.username.value
-    let password = registerSubEles.password.value
-    let repeatPassword = registerSubEles.repeatPassword.value
-    let verCode = registerSubEles.verCode.value
-    let email = registerSubEles.email.value
+    let username = registerForm.username.value
+    let password = registerForm.password.value
+    let repeatPassword = registerForm.repeatPassword.value
+    let verCode = registerForm.verCode.value
+    let email = registerForm.email.value
     if (!username.match(/^\w{4,20}$/)) return alert('用户名必须是 4-20 位的数字、字母、下划线任意组合')
     if (!password.match(/^\S{6,20}$/)) return alert('密码必须是 6-20 位字符串')
     if (password != repeatPassword) return alert('两次输入的密码不一致，请检查后重新输入')

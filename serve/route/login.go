@@ -20,7 +20,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	username := r.Form.Get("username")
 	passwordMd5 := r.Form.Get("passwordMd5")
 	verCode := r.Form.Get("verCode")
-	email, err := GetUserEmail(conn, username)
+	username, email, err := GetUserInfo(conn, username)
 	if err != nil {
 		w.Write(util.MakeErr("用户不存在，请检查用户名或邮箱"))
 		return
@@ -87,17 +87,20 @@ func RemoveExpiresToken(conn *sql.DB) error {
 	return err
 }
 
-// 移除某个 Token 记录
+// 移除某个 Token 记录，并自动移除过期 Token
 func RemoveToken(conn *sql.DB, token string) error {
+	if err := RemoveExpiresToken(conn); err != nil {
+		return err
+	}
 	_, err := conn.Exec("DELETE FROM tag_collect_token WHERE token = ?", token)
 	return err
 }
 
-
-// 根据用户名或邮箱获取用户表中的邮箱
-func GetUserEmail(conn *sql.DB, usernameOrEmail string) (string, error) {
+// 根据用户名或邮箱，获取用户名和邮箱
+func GetUserInfo(conn *sql.DB, usernameOrEmail string) (string, string, error) {
+	var username string
 	var email string
-	err := conn.QueryRow("SELECT email FROM tag_collect_user WHERE username = ? OR email = ?",
-		usernameOrEmail, usernameOrEmail).Scan(&email)
-	return email, err
+	err := conn.QueryRow("SELECT username, email FROM tag_collect_user WHERE username = ? OR email = ?",
+		usernameOrEmail, usernameOrEmail).Scan(&username, &email)
+	return username, email, err
 }
