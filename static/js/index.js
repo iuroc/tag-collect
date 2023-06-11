@@ -15,6 +15,6 @@ exports.router.set('login', login_1.login);
 exports.router.set('user', user_1.user);
 exports.router.set('add', add_1.add);
 exports.router.set('list', list_1.list);
+exports.router.start();
 (0, login_1.checkLogin)();
 (0, template_1.loadTemplate)(exports.router);
-exports.router.start();
