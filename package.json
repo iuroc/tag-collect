@@ -4,7 +4,7 @@
         "build:tsc": "tsc -p backend/tsconfig.json",
         "build": "vite build && npm run build:tsc",
         "dev:tsc": "tsc -p backend/tsconfig.json -w",
-        "dev": "npm run build:tsc && concurrently \"vite dev\" \"nodemon backend/js/app.js 6791\" \"npm run dev:tsc\""
+        "dev": "npm run build:tsc && concurrently \"vite dev\" \"nodemon --quiet backend/js/app.js 6791\" \"npm run dev:tsc\""
     },
     "dependencies": {
         "bootstrap": "^5.3.2",

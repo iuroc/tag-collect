@@ -3,6 +3,6 @@
         "target": "ESNext",
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
-        "outDir": "js"
+        "outDir": "js",
     }
 }

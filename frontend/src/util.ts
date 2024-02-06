@@ -15,3 +15,15 @@ class StateGroup {
 }
 
 export class SG extends StateGroup { }
+
+
+export const randStr = (length: number): string => {
+    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    let result = ''
+    const charsetLength = charset.length
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charsetLength)
+        result += charset[randomIndex]
+    }
+    return result
+}
