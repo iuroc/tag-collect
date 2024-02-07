@@ -7,5 +7,3 @@ const { div } = van.tags
 export default Route({ name: 'register' },
     div('注册页面')
 )
-
-testRegister()

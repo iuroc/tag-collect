@@ -1,7 +1,8 @@
 import { readFileSync } from 'fs'
 import { networkInterfaces } from 'os'
 import { join } from 'path'
-import { Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
+import { verify } from 'jsonwebtoken'
 
 /**
  * 获取局域网 IP 地址
@@ -24,10 +25,27 @@ export const loadConfig = () => {
             user: string,
             password: string,
             database: string
-        }
+        },
+        jwtKey: string
     }
 }
 
 export const sendRes = (res: Response, success: boolean, message: string, data = null) => {
     res.send({ success, message, data })
+}
+
+export const checkJWTMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    const token = req.headers.cookie.match(/token=([^;]+)/)[1]
+    if (checkJWT(token)) next()
+    else sendRes(res, false, '请先登录')
+}
+
+/** 校验 JWT */
+export const checkJWT = (token: string) => {
+    try {
+        verify(token, loadConfig().jwtKey)
+        return true
+    } catch (err) {
+        return false
+    }
 }

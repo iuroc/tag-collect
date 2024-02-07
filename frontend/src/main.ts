@@ -6,5 +6,6 @@ import login from './route/login'
 import register from './route/register'
 import { Navbar } from './view/navber'
 import 'bootstrap/dist/css/bootstrap.css'
+import { testLogin } from './test'
 
 van.add(document.body, Navbar(), home, about, login, register)
