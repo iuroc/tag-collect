@@ -1,3 +1,5 @@
+import sgGlobal from "./state"
+
 export const testRegister = () => {
     fetch('/api/register', {
         method: 'post',
@@ -25,6 +27,6 @@ export const testLogin = () => {
             password: '123456'
         })
     }).then(res => res.json()).then(data => {
-        console.log(data)
+        if (data.success) sgGlobal.get('hasLogin').val = true
     })
 }

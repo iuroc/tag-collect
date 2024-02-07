@@ -1,21 +1,5 @@
-import { State, Val } from 'vanjs-core'
-
-/**
- * State Group
- * @author iuroc
- */
-export class SG<T = {
-    [key: string]: State<any> | SG
-}> {
-    public constructor(private init: T) { }
-
-    public get(key: keyof typeof this.init) {
-        return this.init[key]
-    }
-    public obj(key: keyof typeof this.init) {
-        return this.init[key]
-    }
-}
+import { routeTo } from 'vanjs-router'
+import sgGlobal from './state'
 
 export const randStr = (length: number): string => {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -26,4 +10,11 @@ export const randStr = (length: number): string => {
         result += charset[randomIndex]
     }
     return result
+}
+
+export const checkLogin = () => {
+    fetch('/api/login', { method: 'post' }).then(res => res.json()).then(res => {
+        if (res.success) sgGlobal.get('hasLogin').val = true
+        else routeTo('home')
+    })
 }

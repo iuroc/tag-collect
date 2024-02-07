@@ -1,11 +1,16 @@
 import van from 'vanjs-core'
 import { Route, routeTo } from 'vanjs-router'
 import '../../../scss/main.scss'
+import sgGlobal from '../../state'
 
 const { a, button, div, object, span } = van.tags
 const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
 
-export default Route({ name: 'home', class: 'container py-4' },
+export default Route({
+    name: 'home', onLoad() {
+        if (sgGlobal.get('hasLogin').val) routeTo('work')
+    }, class: 'container py-4'
+},
     div({ class: 'text-center py-5 border border-primary-subtle rounded-4' },
         div({ class: 'display-3 mb-4 text-primary-emphasis' },
             span({ class: 'fw-bold' }, '"'),

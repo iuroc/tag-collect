@@ -14,7 +14,8 @@ router.post('/', async (req, res) => {
     const password = req.body.password
     const connection = await pool.getConnection()
     const [result] = await pool.query<RowDataPacket[]>('SELECT `password` FROM `user` WHERE `username` = ?', [username])
-    const passwordHash = result[0].password
+    const passwordHash = result[0] && result[0].password
+    if (!passwordHash) return sendRes(res, false, '用户名或密码错误')
     connection.release()
     if (compare(password, passwordHash)) {
         res.cookie('token', sign({ username }, loadConfig().jwtKey), { maxAge: 60 * 24 * 60 * 60 * 1000, httpOnly: true })
