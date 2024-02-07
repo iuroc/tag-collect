@@ -12,9 +12,21 @@ export const randStr = (length: number): string => {
     return result
 }
 
-export const checkLogin = () => {
-    fetch('/api/login', { method: 'post' }).then(res => res.json()).then(res => {
-        if (res.success) sgGlobal.get('hasLogin').val = true
-        else routeTo('home')
-    })
+export const checkLogin = () => fetch('/api/login', { method: 'post' }).then(res => res.json()).then(res => {
+    if (res.success) sgGlobal.get('hasLogin').val = true
+    else routeTo('home')
+})
+
+export const checkUsernameFormat = (username: string) => {
+    return Boolean(username.match(/^\w{3,20}$/))
+}
+
+export const checkPassworkFormat = (password: string) => {
+    return Boolean(password.match(/^.{8,20}$/))
+}
+
+export type ResData<T = any> = {
+    success: boolean
+    message: string
+    data: T
 }

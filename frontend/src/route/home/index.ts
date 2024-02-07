@@ -6,7 +6,7 @@ import sgGlobal from '../../state'
 const { a, button, div, object, span } = van.tags
 const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
 
-export default Route({
+export default () => Route({
     name: 'home', onLoad() {
         if (sgGlobal.get('hasLogin').val) routeTo('work')
     }, class: 'container py-4'

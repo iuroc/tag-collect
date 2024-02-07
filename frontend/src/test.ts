@@ -7,8 +7,8 @@ export const testRegister = () => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            username: '360',
-            password: '123456'
+            username: 'iuroc',
+            password: '12345678'
         })
     }).then(res => res.json()).then(data => {
         console.log(data)

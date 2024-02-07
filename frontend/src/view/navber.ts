@@ -16,7 +16,7 @@ export const Navbar = () => {
             ),
             div({ class: 'collapse navbar-collapse', id },
                 div({ class: 'navbar-nav' },
-                    NavItem('主页', 'home'),
+                    NavItem('主页', ['home', 'work']),
                     NavItem('我的', 'user', van.derive(() => !sgGlobal.get('hasLogin').val)),
                 ),
                 div({ class: 'navbar-nav ms-auto' },

@@ -17,10 +17,7 @@ export class SG<T = {
     }
 }
 
-const sgGlobal = new SG<{
-    /** 是否登录 */
-    hasLogin: State<boolean>
-}>({
+const sgGlobal = new SG({
     hasLogin: van.state(false)
 })
 
