@@ -1,21 +1,21 @@
-import { State } from 'vanjs-core'
+import { State, Val } from 'vanjs-core'
 
-/** State Group */
-class StateGroup {
-    public constructor(private init: {
-        [key: string]: State<any> | SG
-    }) { }
+/**
+ * State Group
+ * @author iuroc
+ */
+export class SG<T = {
+    [key: string]: State<any> | SG
+}> {
+    public constructor(private init: T) { }
 
-    public get<T = any>(key: string) {
-        return this.init[key] as State<T>
+    public get(key: keyof typeof this.init) {
+        return this.init[key]
     }
-    public obj(key: string) {
-        return this.init[key] as SG
+    public obj(key: keyof typeof this.init) {
+        return this.init[key]
     }
 }
-
-export class SG extends StateGroup { }
-
 
 export const randStr = (length: number): string => {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'

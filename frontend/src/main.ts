@@ -2,7 +2,9 @@
 import van from 'vanjs-core'
 import home from './route/home'
 import about from './route/about'
-import { Header } from './view'
+import login from './route/login'
+import register from './route/register'
+import { Navbar } from './view/navber'
 import 'bootstrap/dist/css/bootstrap.css'
 
-van.add(document.body, Header(), home, about)
+van.add(document.body, Navbar(), home, about, login, register)

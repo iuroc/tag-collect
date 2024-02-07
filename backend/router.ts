@@ -1,5 +1,6 @@
 import { Router } from 'express'
-import login from './route/login'
+import login from './api/login'
+import register from './api/register'
 import { join } from 'path'
 
 const router = Router()
@@ -9,5 +10,6 @@ router.get('/', (_, res) => {
 })
 
 router.use('/api/login', login)
+router.use('/api/register', register)
 
 export default router
