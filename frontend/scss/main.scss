@@ -22,3 +22,12 @@
         cursor: pointer;
     }
 }
+
+.tag-select-item {
+    cursor: pointer;
+    transition: all .3s;
+
+    &:hover {
+        opacity: .5;
+    }
+}

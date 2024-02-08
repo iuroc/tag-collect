@@ -9,10 +9,10 @@ export class SG<T = {
 }> {
     public constructor(private init: T) { }
 
-    public get(key: keyof typeof this.init) {
+    public get<Key extends keyof T>(key: Key): T[Key] {
         return this.init[key]
     }
-    public obj(key: keyof typeof this.init) {
+    public obj<Key extends keyof T>(key: Key): T[Key] {
         return this.init[key]
     }
 }

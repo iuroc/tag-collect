@@ -4,20 +4,22 @@ import { randItem, shuffleArray } from '../../util'
 const { a, button, div, primary } = van.tags
 const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
 
+export const colorNames = ['primary', 'success', 'danger', 'warning', 'info']
+
+const Tag = (text: string, colorName: string) => {
+    return div({
+        class: `bg-${colorName}-subtle text-${colorName}-emphasis rounded-1 d-inline-block small`,
+        style: 'padding: 2px 5px;'
+    }, text)
+}
+
 export const ListItem = (init: {
     title: Val<string>,
     url: Val<string>
     tags: Val<string[]>,
     desc: Val<string>
 }) => {
-    const colorNames = shuffleArray(['primary', 'success', 'danger', 'warning', 'info'])
-    const Tag = (text: string, index: number) => {
-        const colorName = colorNames[index % 5]
-        return div({
-            class: `bg-${colorName}-subtle text-${colorName}-emphasis rounded-1 d-inline-block small`,
-            style: 'padding: 2px 5px;'
-        }, text)
-    }
+    const randColorNames = shuffleArray(colorNames)
     return div({ class: 'col-xl-4 col-md-6' },
         div({ class: 'card list-item' },
             div({ class: 'card-header text-truncate fw-bold title', title: van.val(init.title) },
@@ -27,7 +29,10 @@ export const ListItem = (init: {
             div({ class: 'card-body' },
                 a({ class: 'small mb-2 text-truncate d-block', href: van.val(init.url), target: '_blank', title: van.val(init.url) }, van.val(init.url)),
                 div({ class: 'mb-2 desc small text-secondary', title: van.val(init.desc) }, van.val(init.desc)),
-                div({ class: 'flex-wrap d-flex', style: 'gap: .3rem;' }, van.val(init.tags).map(Tag))
+                div({ class: 'hstack flex-wrap', style: 'gap: .3rem;' }, van.val(init.tags).map((tag, index) => {
+                    const color = randColorNames[index % colorNames.length]
+                    return Tag(tag, color)
+                }))
             ),
         )
     )
