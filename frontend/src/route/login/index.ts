@@ -4,7 +4,7 @@ import sgGlobal from '../../state'
 import sg from './state'
 import { ResData, checkPassworkFormat, checkUsernameFormat } from '../../util'
 
-const { button, div, input, label } = van.tags
+const { a, button, div, input, label } = van.tags
 
 export default () => {
     return Route({
@@ -23,7 +23,7 @@ export default () => {
                 label({ class: 'form-label' }, '密码'),
             ),
             button({
-                class: 'btn btn-primary w-100', onclick() {
+                class: 'btn btn-primary w-100 mb-3', onclick() {
                     const username = sg.get('username').val
                     const password = sg.get('password').val
                     if (!checkUsernameFormat(username)) {
@@ -42,15 +42,17 @@ export default () => {
                         }).then(res => res.json()).then((data: ResData) => {
                             if (data.success) {
                                 sgGlobal.get('hasLogin').val = true
-                                localStorage.setItem('username', username)
                                 routeTo('work')
+                                sg.get('username').val = ''
+                                sg.get('password').val = ''
                             } else {
                                 alert(data.message)
                             }
                         })
                     }
                 }
-            }, '登录')
+            }, '登录'),
+            div({ class: 'text-center' }, a({ href: '#/register' }, '没有账号？点此注册'))
         )
     )
 }

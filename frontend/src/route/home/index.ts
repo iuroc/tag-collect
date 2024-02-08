@@ -3,7 +3,7 @@ import { Route, routeTo } from 'vanjs-router'
 import '../../../scss/main.scss'
 import sgGlobal from '../../state'
 
-const { a, button, div, object, span } = van.tags
+const { a, button, div, span } = van.tags
 const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
 
 export default () => Route({
