@@ -34,9 +34,13 @@ export const sendRes = (res: Response, success: boolean, message: string, data =
     res.send({ success, message, data })
 }
 
+/** 用于校验 JWT 的中间件，可通过 `req['userId']` 获取用户 ID */
 export const checkJWTMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.cookie.match(/token=([^;]+)/)[1]
-    if (checkJWT(token)) next()
+    const token = req.headers.cookie && req.headers.cookie.match(/token=([^;]+)/)[1]
+    if (checkJWT(token)) {
+        req['userId'] = JSON.parse(atob(token.split('.')[1])).userId
+        next()
+    }
     else sendRes(res, false, '请先登录')
 }
 

@@ -13,12 +13,13 @@ router.post('/', async (req, res) => {
     const username = req.body.username
     const password = req.body.password
     const connection = await pool.getConnection()
-    const [result] = await pool.query<RowDataPacket[]>('SELECT `password` FROM `user` WHERE `username` = ?', [username])
+    const [result] = await pool.query<RowDataPacket[]>('SELECT `id`, `password` FROM `user` WHERE `username` = ?', [username])
     const passwordHash = result[0] && result[0].password
+    const userId = result[0] && result[0].id
     connection.release()
     if (!passwordHash) return sendRes(res, false, '用户名或密码错误')
     if (compareSync(password, passwordHash)) {
-        res.cookie('token', sign({ username }, loadConfig().jwtKey), { maxAge: 60 * 24 * 60 * 60 * 1000, httpOnly: true })
+        res.cookie('token', sign({ userId }, loadConfig().jwtKey), { maxAge: 60 * 24 * 60 * 60 * 1000, httpOnly: true })
         sendRes(res, true, '登录成功')
     } else {
         sendRes(res, false, '用户名或密码错误')

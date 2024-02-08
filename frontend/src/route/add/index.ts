@@ -2,6 +2,7 @@ import van from 'vanjs-core'
 import { Route, routeTo } from 'vanjs-router'
 import sgGlobal from '../../state'
 import { selectTagModal } from './view/modal'
+import { fetchTags } from './mixin'
 
 const { button, div, input, label, textarea } = van.tags
 const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
@@ -16,6 +17,7 @@ const Tag = (text: string) => {
     }, text)
 }
 
+/** 标签输入框 */
 const tagInputEle = input({
     class: 'form-control form-control-sm d-inline-block', style: 'width: 150px;', placeholder: '输入标签，回车插入', onkeydown(event) {
         if (event.key == 'Enter') {
@@ -66,7 +68,7 @@ export default () => {
                         div({ class: 'input-group' },
                             tagInputEle,
                             button({
-                                class: 'btn btn-sm btn-outline-success', onclick() {
+                                class: 'btn btn-sm btn-outline-success', async onclick() {
                                     selectTagModal.show()
                                 }
                             },
