@@ -42,6 +42,7 @@ export default () => {
                         }).then(res => res.json()).then((data: ResData) => {
                             if (data.success) {
                                 sgGlobal.get('hasLogin').val = true
+                                localStorage.setItem('username', username)
                                 routeTo('work')
                             } else {
                                 alert(data.message)

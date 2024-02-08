@@ -13,7 +13,10 @@ export const randStr = (length: number): string => {
 }
 
 export const checkLogin = () => fetch('/api/login', { method: 'post' }).then(res => res.json()).then(res => {
-    if (res.success) sgGlobal.get('hasLogin').val = true
+    if (res.success) {
+        sgGlobal.get('hasLogin').val = true
+        localStorage.setItem('username', res.data.username)
+    }
     else routeTo('home')
 })
 
