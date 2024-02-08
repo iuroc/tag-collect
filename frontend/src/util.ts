@@ -30,3 +30,21 @@ export type ResData<T = any> = {
     message: string
     data: T
 }
+
+/** 获取数组中的随机一个元素 */
+export const randItem = <T>(arr: T[]) => {
+    const newArr = arr.flat()
+    return newArr[Math.floor(Math.random() * newArr.length)]
+}
+
+/** 打乱数组，不影响原数组 */
+export const shuffleArray = <T>(array: T[]) => {
+    const newArr = [...array]
+    for (let i = newArr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        const temp = newArr[i]
+        newArr[i] = newArr[j]
+        newArr[j] = temp
+    }
+    return newArr
+}

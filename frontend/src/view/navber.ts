@@ -10,13 +10,13 @@ export const Navbar = () => {
     const id = randStr(10)
     const element = div({ class: 'navbar navbar-expand-sm sticky-top bg-primary-subtle bg-gradient border-bottom border-2 border-primary-subtle', },
         div({ class: 'container' },
-            a({ class: 'navbar-brand text-primary-emphasis', href: '#/home' }, 'Tag Collect'),
+            a({ class: 'navbar-brand text-primary-emphasis', href: '#/work' }, 'Tag Collect'),
             button({ class: 'navbar-toggler', 'data-bs-toggle': 'collapse', 'data-bs-target': `#${id}` },
                 span({ class: 'navbar-toggler-icon' })
             ),
             div({ class: 'collapse navbar-collapse', id },
                 div({ class: 'navbar-nav' },
-                    NavItem('主页', ['home', 'work']),
+                    NavItem('主页', ['work', 'home']),
                     NavItem('我的', 'user', van.derive(() => !sgGlobal.get('hasLogin').val)),
                 ),
                 div({ class: 'navbar-nav ms-auto' },

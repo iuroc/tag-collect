@@ -3,3 +3,28 @@
     vertical-align: -.125em;
     fill: currentcolor;
 }
+
+.text-justify {
+    text-align: justify;
+}
+
+.list-item {
+    .desc {
+        text-align: justify;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .3rem;
+    }
+
+    .title {
+        cursor: pointer;
+    }
+}
