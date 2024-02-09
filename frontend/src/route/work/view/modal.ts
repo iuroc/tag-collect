@@ -45,8 +45,10 @@ const collectInfoModalEle = MyModal({
         button({ class: 'btn btn-primary' }, '编辑'),
         button({
             class: 'btn btn-danger', onclick() {
-                const { id } = sg.get('modal')
-                fetchDelectCollect(id)
+                if (confirm('确定要删除吗？')) {
+                    const { id } = sg.get('modal')
+                    fetchDelectCollect(id)
+                }
             }
         }, '删除'),
     ],

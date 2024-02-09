@@ -17,7 +17,7 @@ export const Navbar = () => {
             div({ class: 'collapse navbar-collapse', id },
                 div({ class: 'navbar-nav' },
                     NavItem('主页', ['work', 'home'], van.derive(() => !sgGlobal.get('hasLogin').val)),
-                    NavItem('新增收藏', 'add', van.derive(() => !sgGlobal.get('hasLogin').val)),
+                    NavItem('新增收藏', 'edit', van.derive(() => !sgGlobal.get('hasLogin').val)),
                     NavItem('记录搜索', 'search', van.derive(() => !sgGlobal.get('hasLogin').val)),
                     NavItem('个人中心', 'user', van.derive(() => !sgGlobal.get('hasLogin').val)),
                 ),
