@@ -7,9 +7,10 @@ import { fetchTags } from './mixin'
 const { button, div, input, label, textarea } = van.tags
 const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
 
-const Tag = (text: string) => {
+/** 在 Add 页面的 Tag 元素，模态框中的 Tag 是 `TagInModal` 而不是这个 */
+export const Tag = (text: string) => {
     return div({
-        class: `tag-select-item bg-secondary-subtle text-secondary-emphasis rounded-1 d-inline-block small user-select-none py-1 px-2`,
+        class: `tag-select-item primary-subtle hover`,
         onclick() {
             this.remove()
             tagInputEle.focus()
@@ -23,7 +24,7 @@ const tagInputEle = input({
         if (event.key == 'Enter') {
             const tagSelected = getTagsFromBox()
             if (!tagSelected.includes(event.target.value) && event.target.value) {
-                tagListBox.appendChild(Tag(event.target.value))
+                van.add(tagListBox, Tag(event.target.value))
             }
             event.target.value = ''
         }

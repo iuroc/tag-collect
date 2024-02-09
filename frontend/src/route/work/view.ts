@@ -8,7 +8,7 @@ export const colorNames = ['primary', 'success', 'danger', 'warning', 'info']
 
 const Tag = (text: string, colorName: string) => {
     return div({
-        class: `bg-${colorName}-subtle text-${colorName}-emphasis rounded-1 d-inline-block small`,
+        class: `bg-${colorName}-subtle text-${colorName}-emphasis border border-${colorName}-subtle rounded-1 d-inline-block small`,
         style: 'padding: 2px 5px;'
     }, text)
 }

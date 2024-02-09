@@ -25,9 +25,33 @@
 
 .tag-select-item {
     cursor: pointer;
-    transition: all .3s;
+    transition: all .2s;
+    border-radius: var(--bs-border-radius);
+    display: inline-block;
+    font-size: 0.875em;
+    padding: .25rem .5rem;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    user-select: none !important;
+    border: var(--bs-border-width) var(--bs-border-style);
 
-    &:hover {
+    &.hover:hover {
         opacity: .5;
+    }
+
+    &.success {
+        color: var(--bs-success-text-emphasis);
+        border-color: var(--bs-success-border-subtle);
+    }
+
+    &.success.active {
+        color: white;
+        background-color: var(--bs-success);
+    }
+
+    &.primary-subtle {
+        background-color: var(--bs-primary-bg-subtle);
+        border-color: var(--bs-primary-border-subtle);
+        color: var(--bs-primary-text-emphasis);
     }
 }

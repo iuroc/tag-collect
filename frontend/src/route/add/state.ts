@@ -5,4 +5,7 @@ export default new SG({
     title: van.state(''),
     url: van.state(''),
     desc: van.state(''),
+    modal: {
+        tags: van.state('')
+    }
 })
