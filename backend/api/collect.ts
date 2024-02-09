@@ -5,7 +5,7 @@ import { OkPacket, RowDataPacket } from 'mysql2/promise'
 
 const router = Router()
 
-router.post('/', checkJWTMiddleware, async (req, res) => {
+router.post('/add', checkJWTMiddleware, async (req, res) => {
     const userId = req['userId']
     const title = req.body.title
     const url = req.body.url

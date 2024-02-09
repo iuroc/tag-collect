@@ -124,7 +124,7 @@ const saveAdd = async () => {
 
 /** 新增收藏 */
 const addCollect = async (title: string, url: string, desc: string, tags: string[]) => {
-    const res = await fetch('/api/add', {
+    const res = await fetch('/api/collect/add', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'

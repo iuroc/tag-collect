@@ -1,7 +1,7 @@
 import sgGlobal from "./state"
 
 export const testRegister = () => {
-    fetch('/api/register', {
+    fetch('/api/user/register', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
@@ -17,7 +17,7 @@ export const testRegister = () => {
 
 
 export const testLogin = () => {
-    fetch('/api/login', {
+    fetch('/api/user/login', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'

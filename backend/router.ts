@@ -1,8 +1,6 @@
 import { Router } from 'express'
-import login from './api/login'
-import logout from './api/logout'
-import register from './api/register'
-import add from './api/add'
+import user from './api/user'
+import collect from './api/collect'
 import { join } from 'path'
 import tags from './api/tags'
 
@@ -12,10 +10,8 @@ router.get('/', (_, res) => {
     res.sendFile('index.html', { root: join(__dirname, '..', '..', 'frontend') })
 })
 
-router.use('/api/login', login)
-router.use('/api/logout', logout)
-router.use('/api/register', register)
+router.use('/api/user', user)
 router.use('/api/tags', tags)
-router.use('/api/add', add)
+router.use('/api/collect', collect)
 
 export default router

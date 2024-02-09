@@ -39,7 +39,7 @@ export default () => Route({
                 } else if (!checkPassworkFormat(password)) {
                     alert('密码长度必须为 8-20 任意字符组合')
                 } else {
-                    fetch('/api/register', {
+                    fetch('/api/user/register', {
                         method: 'post',
                         headers: {
                             'Content-Type': 'application/json'

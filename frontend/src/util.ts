@@ -12,7 +12,7 @@ export const randStr = (length: number): string => {
     return result
 }
 
-export const checkLogin = () => fetch('/api/login', { method: 'post' }).then(res => res.json()).then(res => {
+export const checkLogin = () => fetch('/api/user/login', { method: 'post' }).then(res => res.json()).then(res => {
     if (res.success) {
         sgGlobal.get('hasLogin').val = true
     }
