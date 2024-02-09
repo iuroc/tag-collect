@@ -6,12 +6,13 @@ import Login from './route/login'
 import Register from './route/register'
 import Work from './route/work'
 import User from './route/user'
-import Add from './route/add'
+import Edit from './route/edit'
 import { Navbar } from './view/navber'
 import 'bootstrap/dist/css/bootstrap.css'
 import { checkLogin } from './util'
 import '../scss/main.scss'
+import 'github-markdown-css/github-markdown-light.css'
 
 checkLogin().then(() => {
-    van.add(document.body, Navbar(), Home(), About(), Login(), Register(), Work(), User(), Add())
+    van.add(document.body, Navbar(), Home(), About(), Login(), Register(), Work(), User(), Edit())
 })

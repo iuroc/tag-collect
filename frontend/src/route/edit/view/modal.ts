@@ -9,26 +9,28 @@ export const MyModal = (init: {
     title: Val<string>,
     content: ChildDom,
     footer: ChildDom,
-    fade?: boolean,
+    noFade?: boolean,
     static?: boolean,
     keyboard?: boolean,
-    parentTag?: boolean
+    noParentTag?: boolean,
+    noFullSm?: boolean,
+    size?: string
 }) => {
 
     return div({
-        class: `modal ${(typeof init.fade == 'undefined' || init.fade) ? 'fade' : ''}`,
+        class: `modal ${init.noFade ? '' : 'fade'}`,
         ...(init.static ? { 'data-bs-backdrop': init.static } : {}),
         ...(init.keyboard ? { 'data-bs-keyboard': init.keyboard } : {}),
         tabindex: -1
     },
-        div({ class: 'modal-dialog modal-dialog-scrollable' },
+        div({ class: `modal-dialog modal-${init.size || 'md'} modal-dialog-scrollable ${init.noFullSm ? '' : 'modal-fullscreen-sm-down'}` },
             div({ class: 'modal-content' },
                 div({ class: 'modal-header' },
                     div({ class: 'h5 modal-title' }, init.title),
                     button({ class: 'btn-close', 'data-bs-dismiss': 'modal' })
                 ),
-                init.parentTag ? div({ class: 'modal-body' }, init.content) : init.content,
-                init.parentTag ? div({ class: 'modal-footer' }, init.footer) : init.footer
+                init.noParentTag ? init.content : div({ class: 'modal-body' }, init.content),
+                init.noParentTag ? init.footer : div({ class: 'modal-footer' }, init.footer)
             )
         )
     )
@@ -96,7 +98,7 @@ const selectTagModalEle = MyModal({
                 }
             }, '确定'),
         )
-    ], parentTag: false
+    ], noParentTag: true
 })
 van.add(document.body, selectTagModalEle)
 export const selectTagModal = new Modal(selectTagModalEle)

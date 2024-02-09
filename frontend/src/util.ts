@@ -1,5 +1,5 @@
 import { activeRoute, routeTo } from 'vanjs-router'
-import sgGlobal from './state'
+import { sgGlobal } from './state'
 
 export const randStr = (length: number): string => {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'

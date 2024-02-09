@@ -1,6 +1,6 @@
 import van from 'vanjs-core'
 import { Route, routeTo } from 'vanjs-router'
-import sgGlobal from '../../state'
+import { sgGlobal } from '../../state'
 import sg from './state'
 import { ResData, checkPassworkFormat, checkUsernameFormat } from '../../util'
 

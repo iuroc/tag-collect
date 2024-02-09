@@ -55,3 +55,14 @@
         color: var(--bs-primary-text-emphasis);
     }
 }
+
+.h-w-1em {
+    height: 1em;
+    width: 1em;
+}
+
+.markdown-body {
+    p {
+        margin-bottom: .5rem !important;
+    }
+}

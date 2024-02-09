@@ -2,7 +2,7 @@ import van, { ChildDom, Val } from 'vanjs-core'
 import { randStr } from '../util'
 import { activeRoute } from 'vanjs-router'
 import { Collapse } from 'bootstrap'
-import sgGlobal from '../state'
+import { sgGlobal } from '../state'
 
 const { a, button, div, span } = van.tags
 

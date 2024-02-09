@@ -1,6 +1,6 @@
 import van from 'vanjs-core'
 import { Route, routeTo } from 'vanjs-router'
-import sgGlobal from '../../state'
+import { sgGlobal } from '../../state'
 import sg from './state'
 import sgLogin from '../login/state'
 import { checkPassworkFormat, checkUsernameFormat } from '../../util'
@@ -16,15 +16,15 @@ export default () => Route({
     div({ style: 'max-width: 400px;', class: 'mx-auto' },
         div({ class: 'fs-3 text-center mb-4' }, '注册页面'),
         div({ class: 'form-floating mb-3' },
-            input({ class: 'form-control', placeholder: '用户名', value: sg.get('username'), oninput: event => sg.get('username').val = event.target.value }),
+            input({ class: 'form-control', type: 'text', placeholder: '用户名', value: sg.get('username'), oninput: event => sg.get('username').val = event.target.value }),
             label('用户名')
         ),
         div({ class: 'form-floating mb-3' },
-            input({ class: 'form-control', placeholder: '用户名', value: sg.get('password'), oninput: event => sg.get('password').val = event.target.value }),
+            input({ class: 'form-control', type: 'password', placeholder: '用户名', value: sg.get('password'), oninput: event => sg.get('password').val = event.target.value }),
             label('密码')
         ),
         div({ class: 'form-floating mb-4' },
-            input({ class: 'form-control', placeholder: '用户名', value: sg.get('password2'), oninput: event => sg.get('password2').val = event.target.value }),
+            input({ class: 'form-control', type: 'password', placeholder: '用户名', value: sg.get('password2'), oninput: event => sg.get('password2').val = event.target.value }),
             label('重复密码')
         ),
         button({
