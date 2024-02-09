@@ -87,7 +87,14 @@ const selectTagModalEle = MyModal({
                     allTagStates.forEach(state => state.selected.val = false)
                 }
             }, '清除选择'),
-            button({ class: 'btn btn-primary', 'data-bs-dismiss': 'modal' }, '确定'),
+            button({
+                class: 'btn btn-primary', 'data-bs-dismiss': 'modal', onclick() {
+                    allTagStates.filter(state => state.selected.val).forEach(state => {
+                        const oldTagList = getTagsFromBox()
+                        if (!oldTagList.includes(state.text.val)) van.add(tagListBox, Tag(state.text.val))
+                    })
+                }
+            }, '确定'),
         )
     ], parentTag: false
 })
@@ -99,17 +106,11 @@ selectTagModalEle.addEventListener('show.bs.modal', async () => {
     while (tagListBoxInModal.firstChild) tagListBoxInModal.removeChild(tagListBoxInModal.firstChild)
     // 清空 Tag State 列表
     allTagStates.splice(0)
+    if (tags.length == 0)
+        return van.add(tagListBoxInModal, div({ class: 'alert alert-info w-100 mb-0' }, '暂时没有标签可供选择'))
     tags.forEach(tag => {
         const tagState: TagState = { text: van.state(tag.text), selected: van.state(false) }
         allTagStates.push(tagState)
         van.add(tagListBoxInModal, TagInModal(tagState))
-    })
-    console.log(allTagStates)
-})
-
-selectTagModalEle.addEventListener('hide.bs.modal', () => {
-    allTagStates.filter(state => state.selected.val).forEach(state => {
-        const oldTagList = getTagsFromBox()
-        if (!oldTagList.includes(state.text.val)) van.add(tagListBox, Tag(state.text.val))
     })
 })

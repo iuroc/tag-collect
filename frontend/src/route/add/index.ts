@@ -2,7 +2,7 @@ import van from 'vanjs-core'
 import { Route, routeTo } from 'vanjs-router'
 import sgGlobal from '../../state'
 import { selectTagModal } from './view/modal'
-import { fetchTags } from './mixin'
+import sg from './state'
 
 const { button, div, input, label, textarea } = van.tags
 const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
@@ -49,17 +49,20 @@ export default () => {
         },
         class: 'container py-4'
     },
-        div({ class: 'mb-4 fs-3' }, '新增收藏'),
+        div({ class: 'hstack mb-4' },
+            div({ class: 'fs-3 me-auto' }, '新增收藏'),
+            button({ class: 'btn btn-primary', onclick: saveAdd }, '确定保存')
+        ),
         div({ class: 'row gy-3 mb-3' },
             div({ class: 'col-lg-6' },
                 div({ class: 'form-floating' },
-                    input({ type: 'text', class: 'form-control border-2', placeholder: '收藏描述' }),
+                    input({ type: 'text', class: 'form-control border-2', placeholder: '收藏描述', oninput: event => sg.get('title').val = event.target.value, value: sg.get('title') }),
                     label('收藏描述')
                 )
             ),
             div({ class: 'col-lg-6' },
                 div({ class: 'form-floating' },
-                    input({ type: 'url', class: 'form-control border-2', placeholder: '收藏网址' }),
+                    input({ type: 'url', class: 'form-control border-2', placeholder: '收藏网址', oninput: event => sg.get('url').val = event.target.value, value: sg.get('url') }),
                     label('收藏网址')
                 )
             ),
@@ -69,7 +72,7 @@ export default () => {
                         div({ class: 'input-group' },
                             tagInputEle,
                             button({
-                                class: 'btn btn-sm btn-outline-success', async onclick() {
+                                class: 'btn btn-sm btn-success', async onclick() {
                                     selectTagModal.show()
                                 }
                             },
@@ -78,7 +81,7 @@ export default () => {
                                     path({ 'd': 'M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z' }),
                                 ), '选择'),
                             button({
-                                class: 'btn btn-sm btn-outline-danger', onclick() {
+                                class: 'btn btn-sm btn-danger', onclick() {
                                     tagListBox.innerHTML = ''
                                     tagInputEle.focus()
                                 }
@@ -96,10 +99,42 @@ export default () => {
             ),
             div({ class: 'col-lg-6' },
                 div({ class: 'form-floating' },
-                    textarea({ class: 'form-control border-2', placeholder: '收藏备注', style: 'height: 200px;' }),
+                    textarea({ class: 'form-control border-2', placeholder: '收藏备注', style: 'height: 200px;', oninput: event => sg.get('desc').val = event.target.value, value: sg.get('desc') }),
                     label('收藏备注（Markdown）')
                 )
             ),
         )
     )
+}
+
+const saveAdd = async () => {
+    const title = sg.get('title').val
+    const url = sg.get('url').val
+    const desc = sg.get('desc').val
+    const tags = getTagsFromBox()
+    if (title == '' && !confirm('确定不填写收藏描述吗？')) return
+    if (url == '') return alert('收藏网址不能为空')
+    await addCollect(title, url, desc, tags)
+    sg.get('title').val = ''
+    sg.get('url').val = ''
+    sg.get('desc').val = ''
+    while (tagListBox.firstChild) tagListBox.removeChild(tagListBox.firstChild)
+    routeTo('home')
+}
+
+/** 新增收藏 */
+const addCollect = async (title: string, url: string, desc: string, tags: string[]) => {
+    const res = await fetch('/api/add', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            title, url, desc, tags
+        })
+    })
+    const data = await res.json()
+    if (!data.success) {
+        alert(data.message)
+    }
 }

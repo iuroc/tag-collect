@@ -2,6 +2,7 @@ import { Router } from 'express'
 import login from './api/login'
 import logout from './api/logout'
 import register from './api/register'
+import add from './api/add'
 import { join } from 'path'
 import tags from './api/tags'
 
@@ -15,5 +16,6 @@ router.use('/api/login', login)
 router.use('/api/logout', logout)
 router.use('/api/register', register)
 router.use('/api/tags', tags)
+router.use('/api/add', add)
 
 export default router
