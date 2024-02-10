@@ -1,8 +1,11 @@
 import van from 'vanjs-core'
 import { Route, routeTo } from 'vanjs-router'
 import { sgGlobal } from '../../state'
-import { selectTagModal } from './view/modal'
+import { selectTagModal, selectTagModalEle } from './view/modal'
 import sg from './state'
+import { firstLoadCollectList } from '../work/mixin'
+import { clearDOM } from '../../util'
+import { saveAdd } from './mixin'
 
 const { button, div, input, label, textarea } = van.tags
 const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
@@ -23,8 +26,9 @@ const tagInputEle = input({
     class: 'form-control form-control-sm d-inline-block', style: 'width: 150px;', placeholder: '输入标签，回车插入', onkeydown(event) {
         if (event.key == 'Enter') {
             const tagSelected = getTagsFromBox()
-            if (!tagSelected.includes(event.target.value) && event.target.value) {
-                van.add(tagListBox, Tag(event.target.value))
+            const tag = event.target.value.trim()
+            if (!tagSelected.includes(tag) && tag) {
+                van.add(tagListBox, Tag(tag))
             }
             event.target.value = ''
         }
@@ -44,8 +48,10 @@ export const tagListBox = div({ class: 'hstack flex-wrap gap-2' })
 
 export default () => {
     return Route({
-        name: 'edit', onLoad() {
+        name: 'edit', onLoad({ args }) {
             if (!sgGlobal.get('hasLogin').val) routeTo('home')
+            if (args.length == 0 && selectTagModalEle.style.display == 'block')
+                selectTagModal.hide()
         },
         class: 'container py-4'
     },
@@ -110,34 +116,3 @@ export default () => {
     )
 }
 
-const saveAdd = async () => {
-    const title = sg.get('title').val
-    const url = sg.get('url').val
-    const desc = sg.get('desc').val
-    const tags = getTagsFromBox()
-    if (title == '' && !confirm('确定不填写收藏描述吗？')) return
-    if (url == '') return alert('收藏网址不能为空')
-    await addCollect(title, url, desc, tags)
-    sg.get('title').val = ''
-    sg.get('url').val = ''
-    sg.get('desc').val = ''
-    while (tagListBox.firstChild) tagListBox.removeChild(tagListBox.firstChild)
-    routeTo('home')
-}
-
-/** 新增收藏 */
-const addCollect = async (title: string, url: string, desc: string, tags: string[]) => {
-    const res = await fetch('/api/collect/add', {
-        method: 'post',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            title, url, desc, tags
-        })
-    })
-    const data = await res.json()
-    if (!data.success) {
-        alert(data.message)
-    }
-}

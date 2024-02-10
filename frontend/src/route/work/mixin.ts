@@ -3,6 +3,7 @@ import { collectListEle } from '.';
 import sg from './state'
 import { ListItem } from './view';
 import { collectInfoModal } from './view/modal';
+import { clearDOM } from '../../util';
 
 export const fetchCollectList = async (page: number = 0, pageSize: number = 36): Promise<{
     list: FetchCollect[];
@@ -47,13 +48,14 @@ type FetchCollect = {
     url: string,
     desc: string,
     tags: string[],
+    'create_time': string
 }
 
 export const firstLoadCollectList = () => {
     sg.set('nextPage', 0)
     sg.set('loadingLock', false)
     fetchCollectList().then(data => {
-        while (collectListEle.firstChild) collectListEle.removeChild(collectListEle.firstChild)
+        clearDOM(collectListEle)
         data.list?.map(item => {
             van.add(collectListEle, ListItem(item))
         })

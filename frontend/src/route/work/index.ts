@@ -4,6 +4,7 @@ import van from 'vanjs-core'
 import { ListItem } from './view'
 import { fetchCollectList, firstLoadCollectList } from './mixin'
 import sg from './state'
+import { collectInfoModal, collectInfoModalEle } from './view/modal'
 
 const { button, div } = van.tags
 const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
@@ -11,10 +12,14 @@ const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
 export const collectListEle = div({ class: 'row gy-4' })
 
 export default () => Route({
-    name: 'work', onLoad() {
+    name: 'work', onLoad({ args }) {
         if (!sgGlobal.get('hasLogin').val) return routeTo('home')
+        if (args.length == 0 && collectInfoModalEle.style.display == 'block')
+            collectInfoModal.hide()
+    }, class: 'container py-4',
+    onFirst() {
         firstLoadCollectList()
-    }, class: 'container py-4'
+    }
 },
     div({ class: 'mb-4 hstack gap-3' },
         button({ class: 'btn btn-primary', onclick: () => routeTo('edit') },

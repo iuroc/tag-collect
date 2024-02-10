@@ -9,17 +9,14 @@
 }
 
 .list-item {
+    cursor: pointer;
+
     .desc {
-        text-align: justify;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
-    }
-
-    .title {
-        cursor: pointer;
     }
 }
 
@@ -65,4 +62,14 @@
     p {
         margin-bottom: .5rem !important;
     }
+
+    p,
+    li {
+        letter-spacing: .5px;
+    }
+}
+
+.break-all {
+    word-wrap: break-word !important;
+    word-break: break-all !important;
 }

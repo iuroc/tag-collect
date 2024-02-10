@@ -2,6 +2,8 @@ import van, { ChildDom, State, Val } from 'vanjs-core'
 import { Modal } from 'bootstrap'
 import { fetchTags } from '../mixin'
 import { Tag, getTagsFromBox, tagListBox } from '..'
+import { routeTo } from 'vanjs-router'
+import { clearDOM } from '../../../util'
 
 const { button, div, input } = van.tags
 
@@ -14,20 +16,27 @@ export const MyModal = (init: {
     keyboard?: boolean,
     noParentTag?: boolean,
     noFullSm?: boolean,
-    size?: string
+    size?: string,
+    /** 关闭按钮点击时执行 `history.back` */
+    closeIsBack?: boolean
 }) => {
 
     return div({
         class: `modal ${init.noFade ? '' : 'fade'}`,
-        ...(init.static ? { 'data-bs-backdrop': init.static } : {}),
-        ...(init.keyboard ? { 'data-bs-keyboard': init.keyboard } : {}),
+        ...(init.static ? { 'data-bs-backdrop': 'static' } : {}),
+        'data-bs-keyboard': init.keyboard || false,
         tabindex: -1
     },
         div({ class: `modal-dialog modal-${init.size || 'md'} modal-dialog-scrollable ${init.noFullSm ? '' : 'modal-fullscreen-sm-down'}` },
             div({ class: 'modal-content' },
                 div({ class: 'modal-header' },
                     div({ class: 'h5 modal-title' }, init.title),
-                    button({ class: 'btn-close', 'data-bs-dismiss': 'modal' })
+                    button({
+                        class: 'btn-close',
+                        ... (init.closeIsBack ? {
+                            onclick() { history.back() }
+                        } : { 'data-bs-dismiss': 'modal' })
+                    })
                 ),
                 init.noParentTag ? init.content : div({ class: 'modal-body' }, init.content),
                 init.noParentTag ? init.footer : div({ class: 'modal-footer' }, init.footer)
@@ -62,7 +71,7 @@ let autoSearchTagTimer: NodeJS.Timeout
 
 const updateTagList = (filter: string = '') => {
     // 清空 Tag DOM 列表
-    while (tagListBoxInModal.firstChild) tagListBoxInModal.removeChild(tagListBoxInModal.firstChild)
+    clearDOM(tagListBoxInModal)
     allTagStates.filter(state => state.text.val.includes(filter)).forEach(state => {
         van.add(tagListBoxInModal, TagInModal(state))
     })
@@ -77,8 +86,7 @@ const tagSearchInputEle = input({
     }
 })
 
-/** 选择标签 `.modal-body` */
-const selectTagModalEle = MyModal({
+export const selectTagModalEle = MyModal({
     title: '选择标签', content: div({ class: 'modal-body p-0' },
         div({ class: 'sticky-top p-3 bg-white' }, tagSearchInputEle),
         tagListBoxInModal
@@ -98,14 +106,14 @@ const selectTagModalEle = MyModal({
                 }
             }, '确定'),
         )
-    ], noParentTag: true
+    ], noParentTag: true, closeIsBack: true, static: true
 })
 van.add(document.body, selectTagModalEle)
 export const selectTagModal = new Modal(selectTagModalEle)
 selectTagModalEle.addEventListener('show.bs.modal', async () => {
     const tags = await fetchTags()
     // 清空 Tag DOM 列表
-    while (tagListBoxInModal.firstChild) tagListBoxInModal.removeChild(tagListBoxInModal.firstChild)
+    clearDOM(tagListBoxInModal)
     // 清空 Tag State 列表
     allTagStates.splice(0)
     if (tags.length == 0)
@@ -115,4 +123,14 @@ selectTagModalEle.addEventListener('show.bs.modal', async () => {
         allTagStates.push(tagState)
         van.add(tagListBoxInModal, TagInModal(tagState))
     })
+})
+
+selectTagModalEle.addEventListener('shown.bs.modal', () => {
+    routeTo('edit', ['select'])
+})
+selectTagModalEle.addEventListener('show.bs.modal', () => {
+    tagSearchInputEle.value = ''
+})
+selectTagModalEle.addEventListener('hidePrevented.bs.modal', () => {
+    history.back()
 })

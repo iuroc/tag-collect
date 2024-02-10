@@ -5,8 +5,9 @@ export default new SG({
     modal: {
         title: van.state(''),
         url: van.state(''),
-        id: 0
+        id: 0,
+        createTime: van.state(''),
     },
     nextPage: 0,
-    loadingLock: false
+    loadingLock: false,
 })

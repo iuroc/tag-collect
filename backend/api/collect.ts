@@ -32,7 +32,7 @@ router.post('/list', checkJWTMiddleware, async (req, res) => {
     const userId = req['userId']
     const page = req.body.page || 0
     const pageSize = req.body.pageSize || 36
-    const [result] = await pool.query<RowDataPacket[]>('SELECT `id`, `title`, `url`, `desc` FROM `collect` WHERE `user_id` = ? LIMIT ? OFFSET ?', [userId, pageSize, page * pageSize])
+    const [result] = await pool.query<RowDataPacket[]>('SELECT `id`, `title`, `url`, `desc`, `create_time` FROM `collect` WHERE `user_id` = ? ORDER BY `create_time` DESC LIMIT ? OFFSET ?', [userId, pageSize, page * pageSize])
     for (const item of result) item.tags = await getCollectTags(item.id)
     sendRes(res, true, '获取成功', result)
 })
@@ -45,10 +45,11 @@ const getCollectTags = async (collectId: number) => {
 router.post('/delete', checkJWTMiddleware, async (req, res) => {
     try {
         const collectId = req.body.collectId
+        // 优先删除非外键表
         await pool.query('START TRANSACTION')
-        await pool.query('DELETE FROM `collect` WHERE `id` = ?', [collectId])
         await pool.query('DELETE FROM `collect_tag` WHERE `collect_id` = ?', [collectId])
-        const [tagNoUsedResult] = await pool.query<RowDataPacket[]>('SELECT `id` FROM `tag` JOIN `collect_tag` ON `tag`.id = `collect_tag`.`tag_id` WHERE `collect_tag`.`tag_id` IS NULL')
+        await pool.query('DELETE FROM `collect` WHERE `id` = ?', [collectId])
+        const [tagNoUsedResult] = await pool.query<RowDataPacket[]>('SELECT `id` FROM `tag` LEFT JOIN `collect_tag` ON `tag`.id = `collect_tag`.`tag_id` WHERE `collect_tag`.`tag_id` IS NULL')
         if (tagNoUsedResult.length > 0)
             await pool.query('DELETE FROM `tag` WHERE `id` IN (?)', [tagNoUsedResult.map(item => item.id)])
         await pool.query('COMMIT')

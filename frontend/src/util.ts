@@ -52,3 +52,19 @@ export const shuffleArray = <T>(array: T[]) => {
     }
     return newArr
 }
+
+/** 清空 DOM 元素，移除所有子元素 */
+export const clearDOM = (ele: HTMLElement) => {
+    while (ele.firstChild) ele.removeChild(ele.firstChild)
+}
+
+export const formatDateTime = (dateTime: string) => {
+    const date = new Date(dateTime)
+    const year = date.getFullYear()
+    const month = ('0' + (date.getMonth() + 1)).slice(-2)
+    const day = ('0' + date.getDate()).slice(-2)
+    const hours = ('0' + date.getHours()).slice(-2)
+    const minutes = ('0' + date.getMinutes()).slice(-2)
+    const seconds = ('0' + date.getSeconds()).slice(-2)
+    return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
+}
