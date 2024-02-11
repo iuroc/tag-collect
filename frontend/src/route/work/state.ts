@@ -7,6 +7,7 @@ export default new SG({
         url: van.state(''),
         id: 0,
         createTime: van.state(''),
+        fromRoute: 'work' as 'work' | 'search'
     },
     nextPage: 0,
     loadingLock: false,

@@ -63,6 +63,13 @@
         margin-bottom: .5rem !important;
     }
 
+    img {
+        max-width: 100%;
+        pointer-events: none;
+        margin-bottom: .5rem;
+        border-radius: 10px;
+    }
+
     p,
     li {
         letter-spacing: .5px;
@@ -72,4 +79,20 @@
 .break-all {
     word-wrap: break-word !important;
     word-break: break-all !important;
+}
+
+.cm-editor {
+    outline: none !important;
+}
+
+// 编辑器样式
+.cm-content {
+    min-height: 300px !important;
+    font-size: 1rem;
+    font-family: 'Consolas', 'Microsoft YaHei';
+    letter-spacing: .5px;
+}
+
+.cm-gutters {
+    min-height: 300px !important;
 }

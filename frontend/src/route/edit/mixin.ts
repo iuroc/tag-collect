@@ -1,5 +1,5 @@
 import { routeTo } from 'vanjs-router'
-import { getTagsFromBox, tagListBox } from '.'
+import { Tag, editorView, getTagsFromBox, tagListBox } from '.'
 import { clearDOM } from '../../util'
 import { firstLoadCollectList } from '../work/mixin'
 import sg from './state'
@@ -17,17 +17,26 @@ export const fetchTags = async () => {
 export const saveAdd = async () => {
     const title = sg.get('title').val.trim()
     const url = sg.get('url').val.trim()
-    const desc = sg.get('desc').val.trim()
+    const desc = editorView.state.doc.toString()
     const tags = getTagsFromBox()
-    if (title == '' && !confirm('确定不填写收藏描述吗？')) return
-    if (url == '' && !confirm('确定不填写收藏网址吗？')) return
-    await addCollect(title, url, desc, tags)
-    sg.get('title').val = ''
-    sg.get('url').val = ''
-    sg.get('desc').val = ''
-    clearDOM(tagListBox)
+    const mode = sg.get('mode')
+    if (mode == 'add') {
+        await addCollect(title, url, desc, tags)
+    } else {
+        await updateCollect(sg.get('id').val, title, url, desc, tags)
+    }
+
+    claerEditInputAndTag()
     firstLoadCollectList()
     routeTo('home')
+}
+
+/** 清空编辑框和标签列表 */
+export const claerEditInputAndTag = () => {
+    sg.get('title').val = ''
+    sg.get('url').val = ''
+    editorView.dispatch(editorView.state.update({ changes: { from: 0, to: editorView.state.doc.length, insert: '' } }))
+    clearDOM(tagListBox)
 }
 
 /** 新增收藏 */
@@ -45,4 +54,39 @@ const addCollect = async (title: string, url: string, desc: string, tags: string
     if (!data.success) {
         alert(data.message)
     }
+}
+
+export const loadCollectInfo = async (collectId: number) => {
+    const res = await fetch('/api/collect/get', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ collectId })
+    })
+    const data = await res.json() as { success: boolean, message: string, data: { title: string, url: string, desc: string, tags: string[] } }
+    if (data.success) {
+        sg.get('title').val = data.data.title
+        sg.get('url').val = data.data.url
+        editorView.dispatch(editorView.state.update({ changes: { from: 0, to: editorView.state.doc.length, insert: data.data.desc } }))
+        clearDOM(tagListBox)
+        const tags = data.data.tags as string[]
+        tags.forEach(tag => {
+            tagListBox.appendChild(Tag(tag))
+        })
+    } else {
+        alert(data.message)
+    }
+}
+
+const updateCollect = (collectId: number, title: string, url: string, desc: string, tags: string[]) => {
+    return fetch('/api/collect/update', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            collectId, title, url, desc, tags
+        })
+    })
 }

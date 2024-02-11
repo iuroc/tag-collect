@@ -1,15 +1,14 @@
 import van from 'vanjs-core'
-import { Route, routeTo } from 'vanjs-router'
+import { Route, activeRoute, routeTo } from 'vanjs-router'
 import { sgGlobal } from '../../state'
 import { selectTagModal, selectTagModalEle } from './view/modal'
 import sg from './state'
-import { firstLoadCollectList } from '../work/mixin'
 import { clearDOM } from '../../util'
-import { saveAdd } from './mixin'
+import { loadCollectInfo, saveAdd } from './mixin'
+import { setupEditor } from './editor'
 
-const { button, div, input, label, textarea } = van.tags
+const { button, div, edit, input, label, textarea } = van.tags
 const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
-
 /** 在 Add 页面的 Tag 元素，模态框中的 Tag 是 `TagInModal` 而不是这个 */
 export const Tag = (text: string) => {
     return div({
@@ -23,13 +22,15 @@ export const Tag = (text: string) => {
 
 /** 标签输入框 */
 const tagInputEle = input({
-    class: 'form-control form-control-sm d-inline-block', style: 'width: 150px;', placeholder: '输入标签，回车插入', onkeydown(event) {
+    class: 'form-control form-control-sm d-inline-block', style: 'width: 150px;', placeholder: '回车插入，空格逗号分隔', onkeydown(event) {
         if (event.key == 'Enter') {
             const tagSelected = getTagsFromBox()
-            const tag = event.target.value.trim()
-            if (!tagSelected.includes(tag) && tag) {
-                van.add(tagListBox, Tag(tag))
-            }
+            const tags = (event.target.value as string).trim().split(/[\s,，]/)
+            tags.forEach(tag => {
+                if (!tagSelected.includes(tag) && tag) {
+                    van.add(tagListBox, Tag(tag))
+                }
+            })
             event.target.value = ''
         }
     }
@@ -46,11 +47,37 @@ export let getTagsFromBox = () => {
 /** 用于显示标签列表的 DOM 盒子 */
 export const tagListBox = div({ class: 'hstack flex-wrap gap-2' })
 
+const titleInputElement = input({ type: 'text', class: 'form-control border-2', placeholder: '收藏描述', oninput: event => sg.get('title').val = event.target.value, value: sg.get('title') })
+
+const editorEle = div()
+export const editorView = setupEditor(editorEle)
+
 export default () => {
     return Route({
         name: 'edit', onLoad({ args }) {
             if (!sgGlobal.get('hasLogin').val) routeTo('home')
-            if (args.length == 0 && selectTagModalEle.style.display == 'block')
+
+            const getMode = () => {
+                if (args.length == 0) return 'add'
+                if (args[0] == 'select') return 'select'
+                return 'update'
+            }
+            // 判断是否为编辑模式
+            if (getMode() == 'update') {
+                sg.set('mode', 'update')
+                const collectId = parseInt(args[0])
+                sg.get('id').val = collectId
+                loadCollectInfo(collectId)
+                setTimeout(() => {
+                    titleInputElement.focus()
+                })
+            } else if (getMode() == 'add') {
+                sg.set('mode', 'add')
+                setTimeout(() => {
+                    titleInputElement.focus()
+                })
+            }
+            if (getMode() != 'select' && selectTagModalEle.style.display == 'block')
                 selectTagModal.hide()
         },
         class: 'container py-4'
@@ -65,8 +92,8 @@ export default () => {
         div({ class: 'row gy-3 mb-3' },
             div({ class: 'col-lg-6' },
                 div({ class: 'form-floating' },
-                    input({ type: 'text', class: 'form-control border-2', placeholder: '收藏描述', oninput: event => sg.get('title').val = event.target.value, value: sg.get('title') }),
-                    label('收藏描述')
+                    titleInputElement,
+                    label('收藏标题')
                 )
             ),
             div({ class: 'col-lg-6' },
@@ -75,7 +102,7 @@ export default () => {
                     label('收藏网址')
                 )
             ),
-            div({ class: 'col-lg-6' },
+            div({ class: 'col-lg-5 col-xl-4' },
                 div({ class: 'card border-2', style: 'height: 200px;' },
                     div({ class: 'card-header hstack gap-2' },
                         div({ class: 'input-group' },
@@ -91,7 +118,7 @@ export default () => {
                                 ), '选择'),
                             button({
                                 class: 'btn btn-sm btn-danger', onclick() {
-                                    tagListBox.innerHTML = ''
+                                    clearDOM(tagListBox)
                                     tagInputEle.focus()
                                 }
                             },
@@ -106,13 +133,20 @@ export default () => {
                     )
                 )
             ),
-            div({ class: 'col-lg-6' },
-                div({ class: 'form-floating' },
-                    textarea({ class: 'form-control border-2', placeholder: '收藏备注', style: 'height: 200px;', oninput: event => sg.get('desc').val = event.target.value, value: sg.get('desc') }),
-                    label('收藏备注（Markdown）')
-                )
+            div({ class: 'col-lg-7 col-xl-8' },
+                div({ class: 'border border-3 rounded overflow-hidden' }, editorEle)
             ),
         )
     )
 }
 
+window.addEventListener('keydown', event => {
+    if (activeRoute.val.name == 'edit' && event.key == 's' && event.ctrlKey) {
+        event.preventDefault()
+    }
+})
+window.addEventListener('keyup', event => {
+    if (activeRoute.val.name == 'edit' && event.key == 's' && event.ctrlKey) {
+        saveAdd()
+    }
+})

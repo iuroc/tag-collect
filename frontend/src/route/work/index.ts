@@ -5,6 +5,7 @@ import { ListItem } from './view'
 import { fetchCollectList, firstLoadCollectList } from './mixin'
 import sg from './state'
 import { collectInfoModal, collectInfoModalEle } from './view/modal'
+import { claerEditInputAndTag } from '../edit/mixin'
 
 const { button, div } = van.tags
 const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
@@ -14,6 +15,7 @@ export const collectListEle = div({ class: 'row gy-4' })
 export default () => Route({
     name: 'work', onLoad({ args }) {
         if (!sgGlobal.get('hasLogin').val) return routeTo('home')
+        sg.obj('modal').set('fromRoute', 'work')
         if (args.length == 0 && collectInfoModalEle.style.display == 'block')
             collectInfoModal.hide()
     }, class: 'container py-4',
@@ -22,7 +24,12 @@ export default () => Route({
     }
 },
     div({ class: 'mb-4 hstack gap-3' },
-        button({ class: 'btn btn-primary', onclick: () => routeTo('edit') },
+        button({
+            class: 'btn btn-primary', onclick() {
+                routeTo('edit')
+                claerEditInputAndTag()
+            }
+        },
             svg({ fill: 'currentColor', class: 'bi bi-plus-square me-1 h-w-1em', viewBox: '0 0 16 16' },
                 path({ 'd': 'M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z' }),
                 path({ 'd': 'M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4' }),
