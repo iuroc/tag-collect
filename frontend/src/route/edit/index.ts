@@ -109,6 +109,7 @@ export default () => {
                             tagInputEle,
                             button({
                                 class: 'btn btn-sm btn-success', async onclick() {
+                                    sg.obj('modal').set('fromRoute', 'edit')
                                     selectTagModal.show()
                                 }
                             }, '选择'),

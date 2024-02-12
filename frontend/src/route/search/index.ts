@@ -6,9 +6,11 @@ import { collectInfoModal, collectInfoModalEle } from '../work/view/modal'
 import { sgGlobal } from '../../state'
 import { clickSearch } from './mixin'
 import sg from './state'
+import sgEdit from '../edit/state'
 import { fetchCollectList } from '../work/mixin'
+import { selectTagModal, selectTagModalEle } from '../edit/view/modal'
 
-const { button, div, input, search, span } = van.tags
+const { button, div, input, span } = van.tags
 const { svg, path } = van.tagsNS('http://www.w3.org/2000/svg')
 
 const SearchTip = () => div({ hidden: sg.get('hideSearchTip') },
@@ -30,7 +32,7 @@ const NoResult = () => div({ class: 'fs-5', hidden: sg.get('hideNoResultTip') },
     ), '暂无搜索结果')
 
 export const searchResultListEle = div({ class: 'row gy-4' })
-export const searchInputEle = input({ class: 'form-control', onkeyup: clickSearch, oninput: event => sg.get('keyword').val = event.target.value, value: sg.get('keyword'), placeholder: '请输入搜索关键词' })
+export const searchInputEle = input({ class: 'form-control', onkeyup: event => clickSearch(event), oninput: event => sg.get('keyword').val = event.target.value, value: sg.get('keyword'), placeholder: '请输入搜索关键词' })
 
 export default () => Route({
     name: 'search', onLoad({ args }) {
@@ -41,15 +43,23 @@ export default () => Route({
         if (args.length == 0 && collectInfoModalEle.style.display.replace('none', '') == '') {
             setTimeout(() => { searchInputEle.focus() })
         }
+        if (args.length == 0 && selectTagModalEle.style.display == 'block') {
+            selectTagModal.hide()
+        }
     }, class: 'container py-4'
 },
     div({ class: 'hstack gap-2 mb-4', style: 'max-width: 600px;' },
         div({ class: 'input-group' },
             searchInputEle,
             button({
-                class: 'btn btn-success', onclick: clickSearch
+                class: 'btn btn-success', onclick: event => clickSearch(event)
             }, '搜索'),
-            button({ class: 'btn btn-primary' }, '标签')
+            button({
+                class: 'btn btn-primary', onclick() {
+                    sgEdit.obj('modal').set('fromRoute', 'search')
+                    selectTagModal.show()
+                }
+            }, '标签')
         ),
     ),
     SearchTip(),

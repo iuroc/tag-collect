@@ -38,28 +38,17 @@ router.post('/list', checkJWTMiddleware, async (req, res) => {
         const page = req.body.page || 0
         const pageSize = req.body.pageSize || 36
         const keyword = `%${(req.body.keyword as string || '').replace(/\s+/g, '%')}%`
-        const [result] = await pool.query<RowDataPacket[]>(`
-        SELECT
-            c.id,
-            c.title,
-            c.url,
-            c.desc,
-            c.create_time,
-            GROUP_CONCAT( tag.TEXT SEPARATOR '{-}' ) AS tags 
-        FROM
-            collect AS c
-            JOIN collect_tag AS ct ON ct.collect_id = c.id
-            JOIN tag ON ct.tag_id = tag.id 
-        WHERE
-            c.user_id = ?
-        GROUP BY
-            c.id 
-        HAVING
-            CONCAT( c.title, c.desc, c.url, tags ) LIKE ? 
-            LIMIT ? OFFSET ?
-        `, [userId, keyword, pageSize, page * pageSize])
-        for (const item of result) item.tags = item.tags.split('{-}')
-        sendRes(res, true, '获取成功', result)
+        const tags = (req.body.tags || []) as string[]
+        if (tags.length == 0) {
+            const [result] = await pool.query<RowDataPacket[]>('SELECT `c`.`id`, `c`.`title`, `c`.`url`, `c`.`desc`, `c`.`create_time`, GROUP_CONCAT( `tag`.`text` SEPARATOR "{-}" ) AS `tags` FROM `collect` AS `c` JOIN `collect_tag` AS ct ON ct.`collect_id` = c.`id` JOIN `tag` ON ct.`tag_id` = tag.`id` WHERE `c`.`user_id` = ? GROUP BY `c`.`id` HAVING CONCAT( `c`.`title`, `c`.`desc`, `c`.`url`, `tags` ) LIKE ? ORDER BY `c`.`create_time` DESC LIMIT ? OFFSET ? ', [userId, keyword, pageSize, page * pageSize])
+            for (const item of result) item.tags = item.tags.split('{-}')
+            sendRes(res, true, '获取成功', result)
+        } else {
+            console.log(tags.join(','))
+            const [result] = await pool.query<RowDataPacket[]>('SELECT c.`id`, c.`title`, c.`url`, c.`desc`, c.`create_time`, GROUP_CONCAT(t.`text` SEPARATOR "{-}") AS `tags` FROM `collect` c JOIN `collect_tag` ct ON c.`id` = ct.`collect_id` JOIN `tag` t ON ct.`tag_id` = t.`id` WHERE c.`user_id` = ? GROUP BY c.`id` HAVING EXISTS ( SELECT 1 FROM `collect_tag` ct2 JOIN `tag` t2 ON ct2.`tag_id` = t2.`id` WHERE ct2.`collect_id` = c.`id` AND t2.`text` IN (?) GROUP BY ct2.`collect_id` HAVING COUNT(DISTINCT t2.`text`) = ? ) ORDER BY c.`create_time` DESC LIMIT ? OFFSET ?', [userId, tags, tags.length, pageSize, page * pageSize])
+            for (const item of result) item.tags = item.tags.split('{-}')
+            sendRes(res, true, '获取成功', result)
+        }
     } catch (error) {
         sendRes(res, false, '获取失败', error)
     }

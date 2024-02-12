@@ -2,8 +2,11 @@ import van, { ChildDom, State, Val } from 'vanjs-core'
 import { Modal } from 'bootstrap'
 import { fetchTags } from '../mixin'
 import { Tag, getTagsFromBox, tagListBox } from '..'
-import { routeTo } from 'vanjs-router'
+import { activeRoute, routeTo } from 'vanjs-router'
 import { clearDOM } from '../../../util'
+import sg from '../state'
+import sgSearch from '../../search/state'
+import { clickSearch } from '../../search/mixin'
 
 const { button, div, input } = van.tags
 
@@ -98,11 +101,16 @@ export const selectTagModalEle = MyModal({
                 }
             }, '清除选择'),
             button({
-                class: 'btn btn-primary', 'data-bs-dismiss': 'modal', onclick() {
-                    allTagStates.filter(state => state.selected.val).forEach(state => {
-                        const oldTagList = getTagsFromBox()
-                        if (!oldTagList.includes(state.text.val)) van.add(tagListBox, Tag(state.text.val))
-                    })
+                class: 'btn btn-primary', onclick() {
+                    if (activeRoute.val.name == 'edit') {
+                        allTagStates.filter(state => state.selected.val).forEach(state => {
+                            const oldTagList = getTagsFromBox()
+                            if (!oldTagList.includes(state.text.val)) van.add(tagListBox, Tag(state.text.val))
+                        })
+                    } else {
+                        clickSearch(null, allTagStates.filter(state => state.selected.val).map(i => i.text.val))
+                    }
+                    history.back()
                 }
             }, '确定'),
         )
@@ -126,7 +134,7 @@ selectTagModalEle.addEventListener('show.bs.modal', async () => {
 })
 
 selectTagModalEle.addEventListener('shown.bs.modal', () => {
-    routeTo('edit', ['select'])
+    routeTo(sg.obj('modal').get('fromRoute'), ['select'])
 })
 selectTagModalEle.addEventListener('show.bs.modal', () => {
     tagSearchInputEle.value = ''

@@ -5,7 +5,7 @@ import { ListItem } from './view';
 import { collectInfoModal } from './view/modal';
 import { clearDOM } from '../../util';
 
-export const fetchCollectList = async (page: number = 0, pageSize: number = 36, keyword: string = ''): Promise<{
+export const fetchCollectList = async (page: number = 0, pageSize: number = 36, keyword: string = '', tags: string[] = []): Promise<{
     list: FetchCollect[];
     end: boolean;
 }> => {
@@ -14,7 +14,7 @@ export const fetchCollectList = async (page: number = 0, pageSize: number = 36, 
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ page, pageSize, keyword })
+        body: JSON.stringify({ page, pageSize, keyword, tags })
     })
     const data = await res.json() as { success: boolean, data: FetchCollect[], message: string }
     if (data.success) return { list: data.data, end: data.data.length < pageSize }
