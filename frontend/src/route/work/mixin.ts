@@ -5,22 +5,22 @@ import { ListItem } from './view';
 import { collectInfoModal } from './view/modal';
 import { clearDOM } from '../../util';
 
-export const fetchCollectList = async (page: number = 0, pageSize: number = 36): Promise<{
+export const fetchCollectList = async (page: number = 0, pageSize: number = 36, keyword: string = ''): Promise<{
     list: FetchCollect[];
-    pageSize: number;
+    end: boolean;
 }> => {
     const res = await fetch('/api/collect/list', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ page, pageSize })
+        body: JSON.stringify({ page, pageSize, keyword })
     })
-    const data = await res.json()
-    if (data.success) return { list: data.data, pageSize }
+    const data = await res.json() as { success: boolean, data: FetchCollect[], message: string }
+    if (data.success) return { list: data.data, end: data.data.length < pageSize }
     else {
         alert(data.message)
-        return { list: [], pageSize }
+        return { list: [], end: true }
     }
 }
 
@@ -54,10 +54,11 @@ type FetchCollect = {
 export const firstLoadCollectList = () => {
     sg.set('nextPage', 0)
     sg.set('loadingLock', false)
-    fetchCollectList().then(data => {
+    fetchCollectList(0, sg.get('pageSize')).then(({ list, end }) => {
         clearDOM(collectListEle)
-        data.list?.map(item => {
+        list.map(item => {
             van.add(collectListEle, ListItem(item))
         })
+        sg.set('loadingLock', end)
     })
 }

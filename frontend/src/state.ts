@@ -4,7 +4,7 @@ import van, { State } from 'vanjs-core'
  * State Group
  * @author iuroc
  */
-export class SG<T> {
+export class SG<T = any> {
     public constructor(private init: T) { }
 
     public get<Key extends keyof T>(key: Key): T[Key] {

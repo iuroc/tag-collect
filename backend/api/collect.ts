@@ -37,9 +37,28 @@ router.post('/list', checkJWTMiddleware, async (req, res) => {
         const userId = req['userId']
         const page = req.body.page || 0
         const pageSize = req.body.pageSize || 36
-        const keyword = req.body.keyword || ''
-        const [result] = await pool.query<RowDataPacket[]>('SELECT `id`, `title`, `url`, `desc`, `create_time` FROM `collect` WHERE `user_id` = ?                                                                                                        ORDER BY `create_time` DESC LIMIT ? OFFSET ?', [userId, pageSize, page * pageSize])
-        for (const item of result) item.tags = await getCollectTags(item.id)
+        const keyword = `%${(req.body.keyword as string || '').replace(/\s+/g, '%')}%`
+        const [result] = await pool.query<RowDataPacket[]>(`
+        SELECT
+            c.id,
+            c.title,
+            c.url,
+            c.desc,
+            c.create_time,
+            GROUP_CONCAT( tag.TEXT SEPARATOR '{-}' ) AS tags 
+        FROM
+            collect AS c
+            JOIN collect_tag AS ct ON ct.collect_id = c.id
+            JOIN tag ON ct.tag_id = tag.id 
+        WHERE
+            c.user_id = ?
+        GROUP BY
+            c.id 
+        HAVING
+            CONCAT( c.title, c.desc, c.url, tags ) LIKE ? 
+            LIMIT ? OFFSET ?
+        `, [userId, keyword, pageSize, page * pageSize])
+        for (const item of result) item.tags = item.tags.split('{-}')
         sendRes(res, true, '获取成功', result)
     } catch (error) {
         sendRes(res, false, '获取失败', error)

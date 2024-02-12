@@ -1,4 +1,4 @@
-import { Route, routeTo } from 'vanjs-router'
+import { Route, activeRoute, routeTo } from 'vanjs-router'
 import { sgGlobal } from '../../state'
 import van from 'vanjs-core'
 import { ListItem } from './view'
@@ -44,16 +44,17 @@ export default () => Route({
 
 window.addEventListener('scroll', () => {
     if (window.scrollY + window.innerHeight >= document.body.offsetHeight - 20) {
+        if (activeRoute.val.name != 'work') return
         if (sg.get('loadingLock')) return
         sg.set('loadingLock', true)
-        fetchCollectList(sg.get('nextPage') + 1).then(data => {
+        fetchCollectList(sg.get('nextPage') + 1, sg.get('pageSize')).then(data => {
             if (data.list.length > 0) {
                 data.list.map(item => {
                     van.add(collectListEle, ListItem(item))
                 })
                 sg.set('nextPage', sg.get('nextPage') + 1)
                 setTimeout(() => {
-                    sg.set('loadingLock', data.list.length != data.pageSize)
+                    sg.set('loadingLock', data.end)
                 }, 500)
             }
         })

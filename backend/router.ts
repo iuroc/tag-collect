@@ -7,7 +7,7 @@ import tags from './api/tags'
 const router = Router()
 
 router.get('/', (_, res) => {
-    res.sendFile('index.html', { root: join(__dirname, '..', '..', 'frontend') })
+    res.sendFile('index.html', { root: join(__dirname, '..', '..', 'frontend', 'dist') })
 })
 
 router.use('/api/user', user)

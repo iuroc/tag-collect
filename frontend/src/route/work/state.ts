@@ -11,4 +11,5 @@ export default new SG({
     },
     nextPage: 0,
     loadingLock: false,
+    pageSize: 36
 })

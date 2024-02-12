@@ -55,7 +55,7 @@ type TagState = {
 /** 所有存在于模态框 DOM 的标签状态列表 */
 const allTagStates: TagState[] = []
 
-const TagInModal = (state: TagState) => {
+export const TagInModal = (state: TagState) => {
     return div({
         class: () => `tag-select-item success ${state.selected.val ? 'active' : ''}`, onclick() {
             if (tagSearchInputEle.value) {
