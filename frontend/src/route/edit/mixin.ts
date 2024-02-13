@@ -100,7 +100,11 @@ export const getTitle = async (url: string) => {
         alert(data.msg)
         return ''
     }
-    return data.data
+    const title = data.data
+    const tempDOM = document.createElement('div')
+    tempDOM.innerHTML = title
+    const titleText = tempDOM.textContent
+    return titleText
 }
 
 export const workSplit = async (text: string) => {
