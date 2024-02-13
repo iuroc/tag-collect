@@ -9,5 +9,6 @@ export default new SG({
     modal: {
         fromRoute: 'edit' as 'search' | 'edit'
     },
-    getTitleLoading: van.state(false)
+    getTitleLoading: van.state(false),
+    urlDisabled: van.state(false)
 })

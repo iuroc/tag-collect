@@ -30,7 +30,7 @@ export const tagInputEle = input({
     }
 })
 
-const urlInputElement = input({ type: 'url', class: 'form-control border-2', placeholder: '收藏网址', oninput: event => sg.get('url').val = event.target.value, value: sg.get('url') })
+const urlInputElement = input({ type: 'url', disabled: sg.get('urlDisabled'), class: 'form-control border-2', placeholder: '收藏网址', oninput: event => sg.get('url').val = event.target.value, value: sg.get('url') })
 
 /** 已经被载入到 `tagListBox` 的标签列表 */
 export let getTagsFromBox = () => {
@@ -60,11 +60,13 @@ export default () => {
             }
             // 判断是否为编辑模式
             if (getMode() == 'update') {
+                sg.get('urlDisabled').val = true
                 sg.set('mode', 'update')
                 const collectId = parseInt(args[0])
                 sg.get('id').val = collectId
                 loadCollectInfo(collectId)
             } else if (getMode() == 'add') {
+                sg.get('urlDisabled').val = false
                 sg.set('mode', 'add')
             }
             if (getMode() != 'select' && selectTagModalEle.style.display == 'block') {

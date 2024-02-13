@@ -22,14 +22,18 @@ export const saveAdd = async () => {
     const tags = getTagsFromBox()
     const mode = sg.get('mode')
     if (mode == 'add') {
-        await addCollect(title, url, desc, tags)
+        if (await addCollect(title, url, desc, tags)) {
+            claerEditInputAndTag()
+            firstLoadCollectList()
+            routeTo('home')
+        }
     } else {
-        await updateCollect(sg.get('id').val, title, url, desc, tags)
+        if (await updateCollect(sg.get('id').val, title, url, desc, tags)) {
+            claerEditInputAndTag()
+            firstLoadCollectList()
+            routeTo('home')
+        }
     }
-
-    claerEditInputAndTag()
-    firstLoadCollectList()
-    routeTo('home')
 }
 
 /** 清空编辑框和标签列表 */
@@ -42,7 +46,7 @@ export const claerEditInputAndTag = () => {
 }
 
 /** 新增收藏 */
-const addCollect = async (title: string, url: string, desc: string, tags: string[]) => {
+const addCollect = async (title: string, url: string, desc: string, tags: string[]): Promise<boolean> => {
     const res = await fetch('/api/collect/add', {
         method: 'post',
         headers: {
@@ -56,6 +60,7 @@ const addCollect = async (title: string, url: string, desc: string, tags: string
     if (!data.success) {
         alert(data.message)
     }
+    return data.success as boolean
 }
 
 export const loadCollectInfo = async (collectId: number) => {
@@ -81,8 +86,8 @@ export const loadCollectInfo = async (collectId: number) => {
     }
 }
 
-const updateCollect = (collectId: number, title: string, url: string, desc: string, tags: string[]) => {
-    return fetch('/api/collect/update', {
+const updateCollect = async (collectId: number, title: string, url: string, desc: string, tags: string[]) => {
+    const res = await fetch('/api/collect/update', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
@@ -91,6 +96,8 @@ const updateCollect = (collectId: number, title: string, url: string, desc: stri
             collectId, title, url, desc, tags
         })
     })
+    const data = await res.json()
+    return data.success as boolean
 }
 
 export const getTitle = async (url: string) => {
@@ -103,7 +110,7 @@ export const getTitle = async (url: string) => {
     const title = data.data
     const tempDOM = document.createElement('div')
     tempDOM.innerHTML = title
-    const titleText = tempDOM.textContent
+    const titleText = tempDOM.textContent || ''
     return titleText
 }
 
