@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { checkJWT, loadConfig, sendRes } from '../util'
-import { compareSync } from 'bcrypt'
+import { checkJWT, checkJWTMiddleware, loadConfig, sendRes } from '../util'
+import { compareSync, hashSync } from 'bcrypt'
 import { sign } from 'jsonwebtoken'
 import { RowDataPacket } from 'mysql2/promise'
 import { createUser, pool, userExists } from '../util/db'
@@ -8,7 +8,7 @@ import { createUser, pool, userExists } from '../util/db'
 const router = Router()
 
 router.get('/logout', (_, res) => {
-    res.cookie('token', '', { maxAge: 0, httpOnly: true })
+    res.clearCookie('token')
     res.redirect('/')
 })
 
@@ -41,11 +41,19 @@ router.post('/register', async (req, res) => {
         if (ifExists) {
             return sendRes(res, false, '用户名已存在')
         }
-        const userId = createUser(username, password)
-        sendRes(res, true, '注册成功', { userId })
+        await createUser(username, password)
+        sendRes(res, true, '注册成功')
     } catch (error) {
         sendRes(res, false, '服务器错误')
     }
+})
+
+router.post('/resetPassword', checkJWTMiddleware, async (req, res) => {
+    const newPassword = req.body.password
+    const userId = req['userId']
+    const passwordHash = hashSync(newPassword, 10)
+    await pool.query('UPDATE `user` SET `password` = ? WHERE `id` = ?', [passwordHash, userId])
+    sendRes(res, true, '修改成功')
 })
 
 export default router
