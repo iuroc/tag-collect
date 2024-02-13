@@ -8,5 +8,6 @@ export default new SG({
     mode: 'add' as 'add' | 'update',
     modal: {
         fromRoute: 'edit' as 'search' | 'edit'
-    }
+    },
+    getTitleLoading: van.state(false)
 })
