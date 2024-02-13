@@ -4,6 +4,7 @@ import { clearDOM } from '../../util'
 import { firstLoadCollectList } from '../work/mixin'
 import sg from './state'
 import van from 'vanjs-core'
+import sgWork from '../work/state'
 
 export const fetchTags = async () => {
     const res = await fetch('/api/tags')
@@ -25,13 +26,13 @@ export const saveAdd = async () => {
         if (await addCollect(title, url, desc, tags)) {
             claerEditInputAndTag()
             firstLoadCollectList()
-            routeTo('home')
+            routeTo('work')
         }
     } else {
         if (await updateCollect(sg.get('id').val, title, url, desc, tags)) {
             claerEditInputAndTag()
             firstLoadCollectList()
-            routeTo('home')
+            routeTo(sgWork.obj('modal').get('fromRoute'))
         }
     }
 }
