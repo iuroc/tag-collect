@@ -3,3 +3,96 @@
     vertical-align: -.125em;
     fill: currentcolor;
 }
+
+.text-justify {
+    text-align: justify;
+}
+
+.list-item {
+    cursor: pointer;
+
+    .desc {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.tag-select-item {
+    cursor: pointer;
+    transition: all .2s;
+    border-radius: var(--bs-border-radius);
+    display: inline-block;
+    font-size: 0.875em;
+    padding: .25rem .5rem;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    user-select: none !important;
+    border: var(--bs-border-width) var(--bs-border-style);
+
+    &.hover:hover {
+        opacity: .5;
+    }
+
+    &.success {
+        color: var(--bs-success-text-emphasis);
+        border-color: var(--bs-success-border-subtle);
+    }
+
+    &.success.active {
+        color: white;
+        background-color: var(--bs-success);
+    }
+
+    &.primary-subtle {
+        background-color: var(--bs-primary-bg-subtle);
+        border-color: var(--bs-primary-border-subtle);
+        color: var(--bs-primary-text-emphasis);
+    }
+}
+
+.h-w-1em {
+    height: 1em;
+    width: 1em;
+}
+
+.markdown-body {
+    p {
+        margin-bottom: .5rem !important;
+    }
+
+    img {
+        max-width: 100%;
+        pointer-events: none;
+        margin-bottom: .5rem;
+        border-radius: 10px;
+    }
+
+    p,
+    li {
+        letter-spacing: .5px;
+    }
+}
+
+.break-all {
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+}
+
+.cm-editor {
+    outline: none !important;
+}
+
+// 编辑器样式
+.cm-content {
+    min-height: 300px !important;
+    font-size: 1rem;
+    font-family: 'Consolas', 'Microsoft YaHei';
+    letter-spacing: .5px;
+}
+
+.cm-gutters {
+    min-height: 300px !important;
+}

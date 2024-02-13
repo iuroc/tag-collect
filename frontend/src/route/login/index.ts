@@ -1,10 +1,10 @@
 import van from 'vanjs-core'
 import { Route, routeTo } from 'vanjs-router'
-import sgGlobal from '../../state'
+import { sgGlobal } from '../../state'
 import sg from './state'
 import { ResData, checkPassworkFormat, checkUsernameFormat } from '../../util'
 
-const { button, div, input, label } = van.tags
+const { a, button, div, input, label } = van.tags
 
 export default () => {
     return Route({
@@ -23,7 +23,7 @@ export default () => {
                 label({ class: 'form-label' }, '密码'),
             ),
             button({
-                class: 'btn btn-primary w-100', onclick() {
+                class: 'btn btn-primary w-100 mb-3', onclick() {
                     const username = sg.get('username').val
                     const password = sg.get('password').val
                     if (!checkUsernameFormat(username)) {
@@ -31,7 +31,7 @@ export default () => {
                     } else if (!checkPassworkFormat(password)) {
                         alert('密码长度必须为 8-20 任意字符组合')
                     } else {
-                        fetch('/api/login', {
+                        fetch('/api/user/login', {
                             method: 'post',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -43,13 +43,16 @@ export default () => {
                             if (data.success) {
                                 sgGlobal.get('hasLogin').val = true
                                 routeTo('work')
+                                sg.get('username').val = ''
+                                sg.get('password').val = ''
                             } else {
                                 alert(data.message)
                             }
                         })
                     }
                 }
-            }, '登录')
+            }, '登录'),
+            div({ class: 'text-center' }, a({ href: '#/register' }, '没有账号？点此注册'))
         )
     )
 }
