@@ -20,6 +20,7 @@ export default () => Route({
             collectInfoModal.hide()
     }, class: 'container py-4',
     onFirst() {
+        if (!sgGlobal.get('hasLogin').val) return
         firstLoadCollectList()
     }
 },
