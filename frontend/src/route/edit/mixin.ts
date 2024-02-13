@@ -3,6 +3,7 @@ import { Tag, editorView, getTagsFromBox, tagListBox } from '.'
 import { clearDOM } from '../../util'
 import { firstLoadCollectList } from '../work/mixin'
 import sg from './state'
+import van from 'vanjs-core'
 
 export const fetchTags = async () => {
     const res = await fetch('/api/tags')
@@ -88,5 +89,36 @@ const updateCollect = (collectId: number, title: string, url: string, desc: stri
         body: JSON.stringify({
             collectId, title, url, desc, tags
         })
+    })
+}
+
+export const getTitle = async (url: string) => {
+    const res = await fetch(`https://get-html.apee.workers.dev/?url=${encodeURIComponent(url)}&type=title`)
+    const data = await res.json() as { code: number, data: string, msg: string }
+    if (data.code != 200) {
+        alert(data.msg)
+        return ''
+    }
+    return data.data
+}
+
+export const workSplit = async (text: string) => {
+    const res = await fetch('/api/tags/cut', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text })
+    })
+    const data = await res.json() as { success: number, data: string[], mesage: string }
+    return data.data
+}
+
+export const insertTags = (tags: string[]) => {
+    const tagSelected = getTagsFromBox()
+    tags.forEach(tag => {
+        if (!tagSelected.includes(tag) && tag) {
+            van.add(tagListBox, Tag(tag))
+        }
     })
 }

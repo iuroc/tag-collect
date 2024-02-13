@@ -4,7 +4,7 @@ import { sgGlobal } from '../../state'
 import { selectTagModal, selectTagModalEle } from './view/modal'
 import sg from './state'
 import { clearDOM } from '../../util'
-import { loadCollectInfo, saveAdd } from './mixin'
+import { getTitle, insertTags, loadCollectInfo, saveAdd, workSplit } from './mixin'
 import { setupEditor } from './editor'
 
 const { button, div, input, label } = van.tags
@@ -24,13 +24,7 @@ export const Tag = (text: string) => {
 const tagInputEle = input({
     class: 'form-control form-control-sm d-inline-block', style: 'width: 150px;', placeholder: '回车插入，空格逗号分隔', onkeydown(event) {
         if (event.key == 'Enter') {
-            const tagSelected = getTagsFromBox()
-            const tags = (event.target.value as string).trim().split(/[\s,，]/)
-            tags.forEach(tag => {
-                if (!tagSelected.includes(tag) && tag) {
-                    van.add(tagListBox, Tag(tag))
-                }
-            })
+            insertTags((event.target.value as string).trim().split(/[\s,，]/))
             event.target.value = ''
         }
     }
@@ -84,10 +78,26 @@ export default () => {
     },
         div({ class: 'hstack mb-4' },
             div({ class: 'fs-3 me-auto' }, '新增收藏'),
-            button({ class: 'btn btn-primary', onclick: saveAdd }, svg({ fill: 'currentColor', class: 'bi bi-check-circle me-1 h-w-1em', viewBox: '0 0 16 16' },
-                path({ 'd': 'M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16' }),
-                path({ 'd': 'm10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05' }),
-            ), '确定保存')
+            div({ class: 'btn-group' },
+                button({
+                    class: 'btn btn-secondary', onclick() {
+                        try {
+                            new URL(sg.get('url').val)
+                            getTitle(sg.get('url').val).then(title => {
+                                sg.get('title').val = title
+                                titleInputElement.focus()
+                                workSplit(title).then(insertTags)
+                            })
+                        } catch {
+                            alert('请输入正确的网址')
+                        }
+                    }
+                }, '抓取标题'),
+                button({ class: 'btn btn-primary', onclick: saveAdd }, svg({ fill: 'currentColor', class: 'bi bi-check-circle me-1 h-w-1em', viewBox: '0 0 16 16' },
+                    path({ 'd': 'M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16' }),
+                    path({ 'd': 'm10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05' }),
+                ), '确定保存')
+            )
         ),
         div({ class: 'row gy-3 mb-3' },
             div({ class: 'col-lg-6' },
