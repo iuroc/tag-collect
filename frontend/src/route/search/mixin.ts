@@ -1,4 +1,4 @@
-import { searchResultListEle } from '.'
+import { searchInputEle, searchResultListEle } from '.'
 import { clearDOM } from '../../util'
 import { fetchCollectList } from '../work/mixin'
 import { ListItem } from '../work/view'
@@ -8,10 +8,10 @@ import van from 'vanjs-core'
 export const clickSearch = async (event?: KeyboardEvent | MouseEvent | null, tags?: string[]) => {
     // 如果是按下键盘，但是并不是回车键
     if (event instanceof KeyboardEvent && event.key != 'Enter') return
-    
     const keyword = van.val(sg.get('keyword'))
     // 如果关键词为空，不做处理
     if (!keyword && (!tags || tags.length == 0)) return
+    searchInputEle.blur()
     sg.get('hideSearchTip').val = true
     sg.get('hideNoResultTip').val = true
     // 触发搜索后，清空输入框

@@ -30,6 +30,8 @@ const tagInputEle = input({
     }
 })
 
+const urlInputElement = input({ type: 'url', class: 'form-control border-2', placeholder: '收藏网址', oninput: event => sg.get('url').val = event.target.value, value: sg.get('url') })
+
 /** 已经被载入到 `tagListBox` 的标签列表 */
 export let getTagsFromBox = () => {
     const tags: string[] = []
@@ -70,7 +72,7 @@ export default () => {
             }
             if (getMode() != 'update' && selectTagModalEle.style.display.replace('none', '') == '') {
                 setTimeout(() => {
-                    titleInputElement.focus()
+                    urlInputElement.focus()
                 })
             }
         },
@@ -83,15 +85,21 @@ export default () => {
                     class: 'btn btn-secondary', onclick() {
                         try {
                             new URL(sg.get('url').val)
+                            sg.get('getTitleLoading').val = true
                             getTitle(sg.get('url').val).then(title => {
                                 sg.get('title').val = title
                                 titleInputElement.focus()
                                 workSplit(title).then(insertTags)
+                            }).finally(() => {
+                                setTimeout(() => {
+                                    sg.get('getTitleLoading').val = false
+                                }, 100)
                             })
                         } catch {
                             alert('请输入正确的网址')
                         }
-                    }
+                    },
+                    disabled: sg.get('getTitleLoading')
                 }, '抓取标题'),
                 button({ class: 'btn btn-primary', onclick: saveAdd }, svg({ fill: 'currentColor', class: 'bi bi-check-circle me-1 h-w-1em', viewBox: '0 0 16 16' },
                     path({ 'd': 'M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16' }),
@@ -102,14 +110,14 @@ export default () => {
         div({ class: 'row gy-3 mb-3' },
             div({ class: 'col-lg-6' },
                 div({ class: 'form-floating' },
-                    titleInputElement,
-                    label('收藏标题')
+                    urlInputElement,
+                    label('收藏网址')
                 )
             ),
             div({ class: 'col-lg-6' },
                 div({ class: 'form-floating' },
-                    input({ type: 'url', class: 'form-control border-2', placeholder: '收藏网址', oninput: event => sg.get('url').val = event.target.value, value: sg.get('url') }),
-                    label('收藏网址')
+                    titleInputElement,
+                    label('收藏标题')
                 )
             ),
             div({ class: 'col-lg-5 col-xl-4' },
