@@ -1,5 +1,5 @@
 import { routeTo } from 'vanjs-router'
-import { Tag, editorView, getTagsFromBox, tagListBox } from '.'
+import { Tag, editorView, getTagsFromBox, tagInputEle, tagListBox } from '.'
 import { clearDOM } from '../../util'
 import { firstLoadCollectList } from '../work/mixin'
 import sg from './state'
@@ -36,6 +36,7 @@ export const saveAdd = async () => {
 export const claerEditInputAndTag = () => {
     sg.get('title').val = ''
     sg.get('url').val = ''
+    tagInputEle.value = ''
     editorView.dispatch(editorView.state.update({ changes: { from: 0, to: editorView.state.doc.length, insert: '' } }))
     clearDOM(tagListBox)
 }

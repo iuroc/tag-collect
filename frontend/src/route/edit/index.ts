@@ -21,7 +21,7 @@ export const Tag = (text: string) => {
 }
 
 /** 标签输入框 */
-const tagInputEle = input({
+export const tagInputEle = input({
     class: 'form-control form-control-sm d-inline-block', style: 'width: 150px;', placeholder: '回车插入，空格逗号分隔', onkeydown(event) {
         if (event.key == 'Enter') {
             insertTags((event.target.value as string).trim().split(/[\s,，]/))
