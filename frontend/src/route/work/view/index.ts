@@ -58,7 +58,7 @@ export const ListItem = (init: {
             div({ class: 'card-body' },
                 a({ class: 'small mb-2 text-truncate d-block', href: van.val(init.url), target: '_blank', title: van.val(init.url) }, van.val(init.url)),
                 div({ class: 'mb-2 desc small text-secondary break-all' },
-                    () => van.val(init.desc).replace(/<[^>]+>|[`*#!]|\[[^[]*\]/g, '') || div({ class: 'my-3' }, '暂无详细内容')
+                    () => van.val(init.desc).replace(/<[^>]+>|[`*#!]|\([^)]+\)/g, '') || div({ class: 'my-3' }, '暂无详细内容')
                 ),
                 div({ class: 'hstack flex-wrap', style: 'gap: .3rem;' }, van.val(init.tags).map((tag, index) => {
                     const color = randColorNames[index % colorNames.length]

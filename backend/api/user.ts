@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
             sendRes(res, false, '用户名或密码错误')
         }
     } catch (error) {
-        sendRes(res, false, '服务器错误')
+        sendRes(res, false, error.message)
     }
 })
 

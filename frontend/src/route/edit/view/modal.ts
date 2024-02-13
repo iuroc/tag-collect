@@ -124,7 +124,8 @@ selectTagModalEle.addEventListener('show.bs.modal', async () => {
     if (tags.length == 0)
         return van.add(tagListBoxInModal, div({ class: 'alert alert-info w-100 mb-0' }, '暂时没有标签可供选择'))
     tags.forEach(tag => {
-        const tagState: TagState = { text: van.state(tag.text), selected: van.state(false) }
+        const selected = sg.obj('modal').get('fromRoute') == 'edit' && getTagsFromBox().includes(tag.text)
+        const tagState: TagState = { text: van.state(tag.text), selected: van.state(selected) }
         allTagStates.push(tagState)
         van.add(tagListBoxInModal, TagInModal(tagState))
     })

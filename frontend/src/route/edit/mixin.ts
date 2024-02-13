@@ -5,6 +5,7 @@ import { firstLoadCollectList } from '../work/mixin'
 import sg from './state'
 import van from 'vanjs-core'
 import sgWork from '../work/state'
+import { clickSearch } from '../search/mixin'
 
 export const fetchTags = async () => {
     const res = await fetch('/api/tags')
