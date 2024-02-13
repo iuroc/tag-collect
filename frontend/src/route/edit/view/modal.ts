@@ -1,6 +1,6 @@
 import van, { ChildDom, State, Val } from 'vanjs-core'
 import { Modal } from 'bootstrap'
-import { fetchTags } from '../mixin'
+import { fetchTags, insertTags } from '../mixin'
 import { Tag, getTagsFromBox, tagListBox } from '..'
 import { activeRoute, routeTo } from 'vanjs-router'
 import { clearDOM } from '../../../util'
@@ -103,10 +103,7 @@ export const selectTagModalEle = MyModal({
             button({
                 class: 'btn btn-primary', onclick() {
                     if (activeRoute.val.name == 'edit') {
-                        allTagStates.filter(state => state.selected.val).forEach(state => {
-                            const oldTagList = getTagsFromBox()
-                            if (!oldTagList.includes(state.text.val)) van.add(tagListBox, Tag(state.text.val))
-                        })
+                        insertTags(allTagStates.filter(state => state.selected.val).map(state => state.text.val))
                     } else {
                         clickSearch(null, allTagStates.filter(state => state.selected.val).map(i => i.text.val))
                     }

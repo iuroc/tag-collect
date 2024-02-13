@@ -59,15 +59,17 @@ export default () => {
                 return 'update'
             }
             // 判断是否为编辑模式
-            if (getMode() == 'update') {
-                sg.get('urlDisabled').val = true
-                sg.set('mode', 'update')
-                const collectId = parseInt(args[0])
-                sg.get('id').val = collectId
-                loadCollectInfo(collectId)
-            } else if (getMode() == 'add') {
-                sg.get('urlDisabled').val = false
-                sg.set('mode', 'add')
+            if (selectTagModalEle.style.display != 'block') {
+                if (getMode() == 'update') {
+                    sg.get('urlDisabled').val = true
+                    sg.set('mode', 'update')
+                    const collectId = parseInt(args[0])
+                    sg.get('id').val = collectId
+                    loadCollectInfo(collectId)
+                } else if (getMode() == 'add') {
+                    sg.get('urlDisabled').val = false
+                    sg.set('mode', 'add')
+                }
             }
             if (getMode() != 'select' && selectTagModalEle.style.display == 'block') {
                 selectTagModal.hide()
