@@ -116,8 +116,8 @@ export const workSplit = async (text: string) => {
 }
 
 export const insertTags = (tags: string[]) => {
-    const tagSelected = getTagsFromBox()
     tags.forEach(tag => {
+        const tagSelected = getTagsFromBox()
         if (!tagSelected.includes(tag) && tag) {
             van.add(tagListBox, Tag(tag))
         }
