@@ -1,6 +1,6 @@
 # Tag Collect
 
-在线网址收藏系统，支持自定义标签序列，并通过组合标签的方式进行检索。
+标签式收藏管理系统，支持自定义标签序列，并通过组合标签的方式进行检索。
 
 ## 项目概述
 
@@ -15,41 +15,41 @@
 
 ## 部署方式
 
-```
-git clone https://github.com/iuroc/tag-collect.git
-cd tag-collect
-npm install
-npm run build
-npm start
-```
+1. 将 [tag_collect.sql](tag_collect.sql) 导入到 MySQL 数据库
+2. 执行下面的命令：
+
+    ```
+    git clone https://github.com/iuroc/tag-collect.git
+    cd tag-collect
+    npm install
+    npm run build
+    npm start
+    ```
 
 ## 开发环境
 
-```
-git clone https://github.com/iuroc/tag-collect.git
-cd tag-collect
-npm install
-npm run dev
-```
+1. 将 [tag_collect.sql](tag_collect.sql) 导入到 MySQL 数据库
+2. 执行下面的命令：
 
-## 功能设计
+    ```
+    git clone https://github.com/iuroc/tag-collect.git
+    cd tag-collect
+    npm install
+    npm run dev
+    ```
 
-- 支持用户登录注册
-- 新增收藏：收藏描述、收藏地址、标签列表、备注
-- 查询收藏：模糊搜索、标签组合筛选
+## 主要功能
 
-```
------------------------
- 蓝奏云 - 官方网站
- https://www.lanzou.com/xxx/index.html
- #XX #XX #xx
- 备注内容
------------------------
-```
+- 新增收藏（自定义标题、网址、标签、详细描述）
+- 编辑收藏、删除收藏
+- 记录搜索（模糊搜索、组合标签匹配）
+- 登录注册（JWT + Bcrypt）
+- 自动抓取网页标题，自动对标题分词
 
 ## 技术探索
 
 - [Bootstrap 实现回退历史记录关闭模态框](https://www.wolai.com/iuroc/thDKZYS893MhvYDZCYda6Q)
+- [Cloudflare Worker 实现抓取网页标题](/worker/get-html.js)
 
 ## 规范探索
 
