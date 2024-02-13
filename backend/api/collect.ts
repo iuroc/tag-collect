@@ -12,6 +12,7 @@ router.post('/add', checkJWTMiddleware, async (req, res) => {
         const url = req.body.url
         const tags = req.body.tags
         const desc = req.body.desc
+        if (await urlExists(url, userId)) return sendRes(res, false, '网址已存在')
         const [result] = await pool.query<OkPacket>('INSERT INTO `collect` (`title`, `url`, `desc`, `user_id`) VALUES (?, ?, ?, ?)', [title, url, desc, userId])
         const collectId = result.insertId
         for (const tag of tags) {
@@ -22,6 +23,11 @@ router.post('/add', checkJWTMiddleware, async (req, res) => {
         sendRes(res, false, '添加失败', error)
     }
 })
+
+const urlExists = async (url: string, userId: number) => {
+    const [result] = await pool.query<RowDataPacket[]>('SELECT `id` FROM `collect` WHERE `url` = ? AND `user_id` = ?', [url, userId])
+    return result.length > 0
+}
 
 const getTagId = async (tag: string) => {
     const [result] = await pool.query<RowDataPacket[]>('SELECT `id` FROM `tag` WHERE `text` = ?', [tag])
