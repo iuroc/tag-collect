@@ -38,6 +38,24 @@
     npm run dev
     ```
 
+## 宝塔面板 + Node 项目管理 + CDN
+
+**初次部署：**
+
+- 在 Node.js 项目目录，打开终端，克隆项目
+- 执行 `npm install` 和 `npm run build`
+- 在 Node 网站管理页面，添加 Node 项目，将执行脚本设置为 `start`，并设置域名
+- 在 CDN 管理页面，添加 CDN 项目，将回源 Host 设置为服务器 IP
+- 设置 `/api` 目录不缓存，其余均缓存
+- 将域名解析到 CDN 的 CNAME 地址
+
+**后续更新：**
+
+- 在 Node.js 项目目录，打开终端，进入 `tag-collect`，执行 `git pull`
+- 执行 `npm run build`
+- 在 Node 网站管理页面，重启项目
+- 在 CDN 管理页面，刷新预热站点主页 `http://{your_host}:6790/`
+
 ## 主要功能
 
 - 新增收藏（自定义标题、网址、标签、详细描述）
