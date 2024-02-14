@@ -6,7 +6,7 @@ import path from 'path'
 
 const port = process.argv[2] || 6790
 const app = express()
-app.use(express.json())
+app.use(express.json({ limit: '5mb' }))
 app.use(router)
 app.use((err: Error, _: Request, res: Response, __: NextFunction) => {
     sendRes(res, false, err.message)
