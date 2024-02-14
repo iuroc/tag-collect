@@ -3,6 +3,7 @@ import { randStr } from '../util'
 import { activeRoute } from 'vanjs-router'
 import { Collapse } from 'bootstrap'
 import { sgGlobal } from '../state'
+import { claerEditInputAndTag } from '../route/edit/mixin'
 
 const { a, button, div, span } = van.tags
 
@@ -17,7 +18,7 @@ export const Navbar = () => {
             div({ class: 'collapse navbar-collapse', id },
                 div({ class: 'navbar-nav' },
                     NavItem('主页', ['work', 'home'], van.derive(() => !sgGlobal.get('hasLogin').val)),
-                    NavItem('新增收藏', 'edit', van.derive(() => !sgGlobal.get('hasLogin').val)),
+                    NavItem('新增收藏', 'edit', van.derive(() => !sgGlobal.get('hasLogin').val), claerEditInputAndTag),
                     NavItem('记录搜索', 'search', van.derive(() => !sgGlobal.get('hasLogin').val)),
                     NavItem('个人中心', 'user', van.derive(() => !sgGlobal.get('hasLogin').val)),
                 ),
@@ -34,7 +35,8 @@ export const Navbar = () => {
 const NavItem = (
     text: ChildDom,
     routeName: Val<string | string[]>,
-    hidden: Val<boolean> = false
+    hidden: Val<boolean> = false,
+    click?: () => void
 ) => {
     const routeNames = van.derive(() => {
         const val = van.val(routeName)
@@ -42,6 +44,10 @@ const NavItem = (
     })
     const classStr = van.derive(() => `nav-link text-primary-emphasis ${van.val(routeNames).includes(van.val(activeRoute).name) ? 'active fw-bold' : ''}`)
     return div({ class: 'nav-item', role: 'button', hidden },
-        a({ href: () => `#/${van.val(routeNames)[0]}`, class: classStr }, text)
+        a({
+            href: () => `#/${van.val(routeNames)[0]}`, class: classStr, onclick() {
+                if (click) click()
+            }
+        }, text)
     )
 }
