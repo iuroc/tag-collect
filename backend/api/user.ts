@@ -14,10 +14,12 @@ router.get('/logout', (_, res) => {
 
 router.post('/login', async (req, res) => {
     try {
-        const token = req.headers.cookie && req.headers.cookie.match(/token=([^;]+)/)[1]
-        if (checkJWT(token)) return sendRes(res, true, '登录成功')
-        const username = req.body.username
-        const password = req.body.password
+        const username = req.body.username as string
+        const password = req.body.password as string
+        if (!username && !password) {
+            const token = req.headers.cookie && req.headers.cookie.match(/token=([^;]+)/)[1]
+            if (checkJWT(token)) return sendRes(res, true, '登录成功')
+        }
         const [result] = await pool.query<RowDataPacket[]>('SELECT `id`, `password` FROM `user` WHERE `username` = ?', [username])
         const passwordHash = result[0] && result[0].password
         const userId = result[0] && result[0].id
